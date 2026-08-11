@@ -77,8 +77,16 @@
         <option value="成都|30.573|104.067">成都</option>
         <option value="武汉|30.593|114.305">武汉</option>
         <option value="西安|34.342|108.940">西安</option>
+        <option value="深圳|22.543|114.058">深圳</option>
+        <option value="杭州|30.274|120.155">杭州</option>
+        <option value="南京|32.060|118.797">南京</option>
+        <option value="青岛|36.067|120.383">青岛</option>
+        <option value="重庆|29.563|106.551">重庆</option>
+        <option value="昆明|25.039|102.718">昆明</option>
+        <option value="哈尔滨|45.803|126.535">哈尔滨</option>
+        <option value="兰州|36.061|103.834">兰州</option>
       </select>
-      <input id="customCity" placeholder="自定义：城市名|纬度|经度，如 石家庄|38.04|114.51" style="flex:1;min-width:240px">
+      <input id="customCity" placeholder="自定义：城市名/纬度/经度，如 石家庄/38.04/114.51" style="flex:1;min-width:240px">
       <button onclick="load()">分析</button>
     </div>
   </header>
@@ -138,12 +146,17 @@ function designFlow(Pmm24, psi, Fha){
 const DN = [75,100,150,200,250,300,400,500,600,800,1000,1200];
 function dnPick(Dmm){ for(const d of DN) if(Dmm <= d) return d; return DN[DN.length-1]; }
 
+let loadSeq = 0;   // 请求序号：防止快速切换城市时旧请求覆盖新结果
 async function load(){
+  const seq = ++loadSeq;
   const cv = $("#customCity").value.trim();
   if(cv){
-    const p = cv.split("|");
-    if(p.length === 3){ CITY.lat = +p[1]; CITY.lng = +p[2]; CITY.name = p[0]; }
-    else{ alert("自定义格式：城市名|纬度|经度"); return; }
+    // 兼容 /、|、全角｜／（手机输入法常见问题）
+    const norm = cv.replace(/[｜]/g, "|").replace(/[／]/g, "/");
+    const p = norm.split(/[/|]/);
+    if(p.length === 3 && p[1] && p[2]){
+      CITY.lat = +p[1]; CITY.lng = +p[2]; CITY.name = p[0] || "自定义";
+    }else{ alert("自定义格式：城市名/纬度/经度，如 石家庄/38.04/114.51"); return; }
   }else{
     const [n, la, lo] = $("#citySel").value.split("|");
     CITY.name = n; CITY.lat = +la; CITY.lng = +lo;
@@ -156,10 +169,11 @@ async function load(){
       fetchJ(base + "&daily=precipitation_sum,temperature_2m_max,temperature_2m_min,precipitation_probability_max&past_days=90&forecast_days=7"),
       fetchJ(base + "&hourly=precipitation,precipitation_probability,temperature_2m&past_days=7&forecast_days=1")
     ]);
+    if(seq !== loadSeq) return;   // 已有更新的请求，丢弃过期结果
     _dh = { d, h };
     HIST = { kind: "90d", note: "" };
     render({ daily: { time: d.daily.time.slice(0, 90), precipitation_sum: d.daily.precipitation_sum.slice(0, 90) } }, d, h);
-    loadHistory();   // 后台加载 5 年历史（带缓存），到达后自动升级重现期
+    loadHistory(seq);   // 后台加载 5 年历史（带缓存），到达后自动升级重现期
   }catch(e){
     $("#app").innerHTML = `<div class="state"><h2 style="font-size:15px">😥 数据获取失败，请检查网络</h2>
       <p style="font-size:13px;margin-top:6px">${esc(e.message)}</p>
@@ -170,7 +184,8 @@ async function load(){
 let HIST = { kind: "90d", note: "" };   // 历史数据状态：90d(快) / 5y(升级) / 失败降级
 let _dh = null;                          // 最近一次 d/h，供历史重试
 
-async function loadHistory(){
+async function loadHistory(seqIn){
+  const seq = seqIn === undefined ? loadSeq : seqIn;   // 重试按钮不带参数调用时沿用当前请求
   const { d, h } = _dh || {};
   if(!d) return;
   const now = new Date(Date.now() - 864e5);
@@ -179,9 +194,11 @@ async function loadHistory(){
   const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${CITY.lat}&longitude=${CITY.lng}&start_date=${D(y5)}&end_date=${D(now)}&daily=precipitation_sum&timezone=Asia%2FShanghai`;
   try{
     const a = await cachedFetch(url, 6 * 3600e3);   // 6 小时本地缓存，二次打开秒级
+    if(seq !== loadSeq) return;   // 已切换到新城市，丢弃过期结果
     HIST = { kind: "5y", note: "" };
     render(a, d, h);
   }catch(e){
+    if(seq !== loadSeq) return;
     HIST = { kind: "90d", note: "5 年历史数据加载失败（网络原因），重现期暂基于近90天样本估算" };
     render({ daily: { time: d.daily.time.slice(0, 90), precipitation_sum: d.daily.precipitation_sum.slice(0, 90) } }, d, h);
   }
@@ -393,7 +410,7 @@ function exportJSON(){
   const data = {
     city: CITY.name, lat: CITY.lat, lng: CITY.lng,
     generatedAt: new Date().toISOString(),
-    disclaimer: "基于公开气象数据与近90天样本的初步估算，正式设计需采用当地多年暴雨资料与规范方法。",
+    disclaimer: "基于公开气象数据与近5年历史样本（ERA5 再分析）的估算，正式设计需采用当地多年暴雨资料与规范方法。",
     ...window._last
   };
   download("analysis_" + CITY.name + ".json", JSON.stringify(data, null, 2), "application/json");
