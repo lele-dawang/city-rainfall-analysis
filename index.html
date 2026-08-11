@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0e7490">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>城市雨水情与排水设计分析 · 给排水数据项目</title>
+<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+<style>
+  :root{ --ink:#0f3d4d; --ink2:#4a6b78; --muted:#8aa3ad; --accent:#0e7490; --accent2:#06b6d4; --warn:#f59e0b; --card:#fff; --line:#e3eef2; }
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  body{ font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; color:var(--ink); line-height:1.55;
+    min-height:100vh; padding:22px 16px 48px;
+    background:linear-gradient(180deg,#e0f2f7 0%,#c7e6f0 140%); background-attachment:fixed; }
+  .wrap{ max-width:800px; margin:0 auto; }
+  header{ display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-bottom:18px; }
+  header h1{ font-size:20px; font-weight:800; letter-spacing:.02em; }
+  header .sub{ font-size:12px; color:var(--muted); width:100%; }
+  .controls{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; width:100%; }
+  .controls input, .controls select{
+    height:40px; border:1px solid var(--line); border-radius:10px; padding:0 12px;
+    font-size:14px; font-family:inherit; color:var(--ink); background:#fff; outline:none;
+  }
+  .controls button{
+    height:40px; border:none; border-radius:10px; padding:0 20px; font-size:14px; font-weight:700;
+    background:linear-gradient(135deg,#0e7490,#06b6d4); color:#fff; cursor:pointer; font-family:inherit;
+  }
+  .cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-bottom:14px; }
+  .kpi{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px; box-shadow:0 6px 18px rgba(14,116,144,.08); }
+  .kpi .l{ font-size:12px; color:var(--muted); margin-bottom:4px; }
+  .kpi .v{ font-size:22px; font-weight:800; color:var(--accent); }
+  .kpi .v small{ font-size:12px; font-weight:400; color:var(--muted); }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:14px; box-shadow:0 8px 24px rgba(14,116,144,.08); }
+  .card h2{ font-size:14px; font-weight:700; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+  .card h2::after{ content:""; flex:1; height:1px; background:var(--line); }
+  .chart{ width:100%; height:270px; }
+  .note{ font-size:12px; color:var(--muted); margin-top:8px; }
+  .concl{ font-size:13.5px; color:var(--ink2); line-height:1.9; }
+  .concl b{ color:var(--accent); }
+  /* 计算器 */
+  .calc{ display:grid; grid-template-columns:1fr 1fr; gap:10px 18px; }
+  .calc label{ font-size:13px; color:var(--ink2); display:flex; flex-direction:column; gap:6px; }
+  .calc label span{ font-weight:600; color:var(--ink); }
+  .calc input[type=range]{ width:100%; accent-color:var(--accent); }
+  .calc output{ font-size:12px; color:var(--muted); }
+  .calc-result{ grid-column:1/-1; background:#f0f9fb; border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-top:4px; }
+  .calc-result .big{ font-size:24px; font-weight:800; color:var(--accent); }
+  .calc-result .eq{ font-size:12.5px; color:var(--ink2); margin-top:6px; font-family:Consolas,Menlo,monospace; }
+  .state{ text-align:center; padding:50px 20px; color:var(--ink2); }
+  .state .spin{ width:30px; height:30px; margin:0 auto 14px; border-radius:50%; border:3px solid rgba(14,116,144,.2); border-top-color:var(--accent); animation:sp .9s linear infinite; }
+  @keyframes sp{ to{ transform:rotate(360deg) } }
+  .toolbar{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .toolbar button{
+    height:36px; border:1px solid var(--line); border-radius:10px; padding:0 16px; font-size:13px; font-weight:600;
+    background:#fff; color:var(--accent); cursor:pointer; font-family:inherit;
+  }
+  .toolbar button:active{ background:#f0f9fb; }
+  footer{ text-align:center; color:var(--muted); font-size:11.5px; margin-top:20px; line-height:1.8; }
+  @media (max-width:520px){ .calc{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🌧 城市雨水情与排水设计分析</h1>
+    <span class="sub">数据：Open-Meteo（全球气象再分析，公开 API）· 分析方法：超阈值抽样 + 指数分布重现期估算 · 推理公式 Q=ΨqF · 个人项目</span>
+    <div class="controls">
+      <select id="citySel" onchange="load()">
+        <option value="张家口|40.768|114.886" selected>张家口</option>
+        <option value="北京|39.904|116.407">北京</option>
+        <option value="天津|39.084|117.201">天津</option>
+        <option value="上海|31.230|121.474">上海</option>
+        <option value="广州|23.129|113.264">广州</option>
+        <option value="成都|30.573|104.067">成都</option>
+        <option value="武汉|30.593|114.305">武汉</option>
+        <option value="西安|34.342|108.940">西安</option>
+      </select>
+      <input id="customCity" placeholder="自定义：城市名|纬度|经度，如 石家庄|38.04|114.51" style="flex:1;min-width:240px">
+      <button onclick="load()">分析</button>
+    </div>
+  </header>
+  <div class="toolbar">
+    <button onclick="load()">🔄 重新加载</button>
+    <button onclick="exportJSON()">⬇ 导出分析 JSON</button>
+    <button onclick="exportCSV()">⬇ 导出降雨数据 CSV</button>
+  </div>
+  <div id="app"><div class="state"><div class="spin"></div><h2 style="font-size:15px">正在获取降雨数据…</h2></div></div>
+  <footer>
+    <div style="margin-bottom:6px;color:var(--ink2)">v2.1 · © 2026 乐乐大王 · 除本人授权外禁止商用</div>
+    说明：本看板为个人学习项目，重现期与设计流量为基于近90天样本的<b>初步估算</b>（超阈值法拟合指数分布），
+    正式设计应采用当地多年实测暴雨资料与当地暴雨强度公式（GB50014-2021《室外排水设计标准》）。<br>
+    数据来源 Open-Meteo（CC BY 4.0）
+  </footer>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const CITY = { lat:40.768, lng:114.886, name:"张家口" };
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const GRADE = [["小雨",10,"#7dd3fc"],["中雨",25,"#38bdf8"],["大雨",50,"#0ea5e9"],["暴雨",1e9,"#0369a1"]];
+const grade = r => { for(const [n,th,c] of GRADE) if(r < th) return {n,c}; return {n:"暴雨",c:"#0369a1"}; };
+const fmt = v => (v ?? 0).toFixed(1);
+const charts = {};
+function mkChart(id){
+  if(charts[id]) charts[id].dispose();
+  const el = document.getElementById(id);
+  charts[id] = el ? echarts.init(el) : null;
+  return charts[id];
+}
+window.addEventListener("resize", () => Object.values(charts).forEach(c => c && c.resize()));
+
+async function fetchJ(url){
+  const r = await fetch(url);
+  if(!r.ok) throw new Error("HTTP " + r.status);
+  return r.json();
+}
+
+/* ---------- 专业分析模型 ---------- */
+// 超阈值法(POT) + 指数分布：x_T = u + β·ln(T·λ)，u=阈值，β=超出量均值，λ=年均超阈次数
+function returnPeriods(rain, u = 5){
+  const evs = rain.filter(r => r >= u);
+  const beta = evs.length ? evs.reduce((s, r) => s + (r - u), 0) / evs.length : 0;
+  const nYr = Math.max(rain.length / 365.25, 1e-6);
+  const lam = evs.length / nYr;
+  const p = T => u + beta * Math.log(Math.max(1e-6, T * lam));
+  return { p2: p(2), p5: p(5), p10: p(10), p20: p(20), events: evs.length, beta, lam };
+}
+// 推理公式法估算雨水设计流量：Q = Ψ·q·F（q 取 T 年重现期 24h 雨量折算平均强度）
+function designFlow(Pmm24, psi, Fha){
+  const q = Pmm24 / 24;                    // mm/h（24h 平均强度近似）
+  const Q = psi * q * Fha * 10 / 3600;     // m³/s（q mm/h→m/h /1000，F ha→m² ×10000，/3600）
+  const v = 1.0;                           // m/s，满流圆管初选流速
+  const Dm = Q > 0 ? Math.sqrt(4 * Q / (Math.PI * v)) : 0;
+  return { q: q, Q: Q, Dmm: Math.round(Dm * 1000) };
+}
+const DN = [75,100,150,200,250,300,400,500,600,800,1000,1200];
+function dnPick(Dmm){ for(const d of DN) if(Dmm <= d) return d; return DN[DN.length-1]; }
+
+async function load(){
+  const cv = $("#customCity").value.trim();
+  if(cv){
+    const p = cv.split("|");
+    if(p.length === 3){ CITY.lat = +p[1]; CITY.lng = +p[2]; CITY.name = p[0]; }
+    else{ alert("自定义格式：城市名|纬度|经度"); return; }
+  }else{
+    const [n, la, lo] = $("#citySel").value.split("|");
+    CITY.name = n; CITY.lat = +la; CITY.lng = +lo;
+  }
+  $("#app").innerHTML = `<div class="state"><div class="spin"></div><h2 style="font-size:15px">正在获取 ${esc(CITY.name)} 降雨数据…</h2></div>`;
+  try{
+    const base = `https://api.open-meteo.com/v1/forecast?latitude=${CITY.lat}&longitude=${CITY.lng}&timezone=Asia%2FShanghai`;
+    const [d, h] = await Promise.all([
+      fetchJ(base + "&daily=precipitation_sum,temperature_2m_max,temperature_2m_min,precipitation_probability_max&past_days=90&forecast_days=7"),
+      fetchJ(base + "&hourly=precipitation,precipitation_probability,temperature_2m&past_days=7&forecast_days=1")
+    ]);
+    render(d, h);
+  }catch(e){
+    $("#app").innerHTML = `<div class="state"><h2 style="font-size:15px">😥 数据获取失败，请检查网络</h2>
+      <p style="font-size:13px;margin-top:6px">${esc(e.message)}</p>
+      <button style="margin-top:14px;padding:8px 22px;border:none;border-radius:10px;background:var(--accent);color:#fff;cursor:pointer" onclick="load()">重试</button></div>`;
+  }
+}
+
+function render(d, h){
+  const days = d.daily;
+  const n30 = days.time.length - 7;
+  const hist = days.time.slice(0, n30).map((t, i) => ({ t, r: days.precipitation_sum[i] || 0 }));
+  const fc = days.time.slice(n30).map((t, i) => ({ t, r: days.precipitation_sum[n30 + i] || 0, h: days.temperature_2m_max[n30 + i] || 0 }));
+
+  // 统计指标
+  const sum = hist.reduce((s, x) => s + x.r, 0);
+  const maxDay = hist.reduce((a, b) => b.r > a.r ? b : a, { r: 0 });
+  const storm = hist.filter(x => x.r >= 50).length;
+  const heavy = hist.filter(x => x.r >= 25 && x.r < 50).length;
+  const wet = hist.filter(x => x.r >= 0.1).length;
+  let streak = 0, best = 0;
+  for(const x of hist){ if(x.r < 0.5) streak++, best = Math.max(best, streak); else streak = 0; }
+  const sumFc = fc.reduce((s, x) => s + x.r, 0);
+  const maxFc = fc.reduce((a, b) => b.r > a.r ? b : a, { r: 0, t: fc[0].t });
+
+  // 重现期 + 设计流量
+  const rp = returnPeriods(hist.map(x => x.r));
+  const psi0 = 0.6, F0 = 5, T0 = 5;
+  const df0 = designFlow(T0 === 5 ? rp.p5 : (T0 === 2 ? rp.p2 : (T0 === 10 ? rp.p10 : rp.p20)), psi0, F0);
+
+  $("#app").innerHTML = `
+    <div class="cards">
+      <div class="kpi"><div class="l">近90天累计降雨</div><div class="v">${fmt(sum)}<small> mm</small></div></div>
+      <div class="kpi"><div class="l">最大单日降雨</div><div class="v">${fmt(maxDay.r)}<small> mm</small></div><div class="l" style="margin-top:2px">${maxDay.t.slice(5)}</div></div>
+      <div class="kpi"><div class="l">降雨天数(≥0.1mm)</div><div class="v">${wet}<small> 天</small></div></div>
+      <div class="kpi"><div class="l">大雨日(25-50mm)</div><div class="v">${heavy}<small> 天</small></div></div>
+      <div class="kpi"><div class="l">暴雨日(≥50mm)</div><div class="v">${storm}<small> 天</small></div></div>
+      <div class="kpi"><div class="l">最长连续无雨</div><div class="v">${best}<small> 天</small></div></div>
+    </div>
+
+    <div class="card"><h2>📊 近90天逐日降雨量（${esc(CITY.name)}）</h2>
+      <div class="chart" id="c1"></div>
+      <div class="note">柱色按降雨等级着色：小雨&lt;10mm ｜ 中雨10–25mm ｜ 大雨25–50mm ｜ 暴雨≥50mm</div>
+    </div>
+
+    <div class="card"><h2>📈 设计暴雨重现期估算（超阈值法 + 指数分布）</h2>
+      <div class="chart" id="c2"></div>
+      <div class="note">基于近90天样本、阈值 u=${rp.beta > 0 ? 5 : 0}mm，共识别 ${rp.events} 场降雨事件。
+        指数分布拟合 x_T = u + β·ln(T·λ)，β=${rp.beta.toFixed(1)}mm，年均事件率 λ≈${rp.lam.toFixed(1)} 次/年。
+        正式设计请采用当地多年暴雨资料（GB50014-2021）。</div>
+    </div>
+
+    <div class="card"><h2>🔧 雨水设计流量估算（推理公式 Q = Ψ·q·F）</h2>
+      <div class="calc">
+        <label><span>径流系数 Ψ</span><input type="range" id="psi" min="0.1" max="0.95" step="0.05" value="${psi0}" oninput="calcFlow()"><output id="psiV">${psi0}（绿地/道路混合，可参考 GB50014）</output></label>
+        <label><span>汇水面积 F</span><input type="range" id="Fha" min="0.5" max="50" step="0.5" value="${F0}" oninput="calcFlow()"><output id="FhaV">${F0} ha（示例小区）</output></label>
+        <label><span>设计重现期 T</span><select id="Tsel" onchange="calcFlow()">
+          <option value="2">2 年一遇</option><option value="5" selected>5 年一遇</option>
+          <option value="10">10 年一遇</option><option value="20">20 年一遇</option>
+        </select><output id="TV">5 年一遇 24h 设计雨量 ${fmt(rp.p5)} mm</output></label>
+        <label><span>设计暴雨强度 q</span><input type="range" id="q" min="0.5" max="20" step="0.1" value="${df0.q.toFixed(1)}" oninput="calcFlow(true)"><output id="qV">${df0.q.toFixed(1)} mm/h（可手动覆盖）</output></label>
+        <div class="calc-result" id="calcResult"></div>
+      </div>
+      <div class="note">计算式：Q = Ψ·q·F = Ψ × (P<sub>T</sub>/24) × F；Q 为雨水设计流量(m³/s)，q 为暴雨强度(mm/h，24h 平均强度近似)，
+        F 为汇水面积(ha)。管径按满流圆管初选（n 取 0.013，流速 1.0 m/s）。正式设计应按当地暴雨强度公式与推理公式法/模型法复核。</div>
+    </div>
+
+    <div class="card"><h2>🔮 未来7天降雨预报 + 气温</h2>
+      <div class="chart" id="c3"></div>
+    </div>
+
+    <div class="card"><h2>⏱ 近7天逐小时降雨量</h2>
+      <div class="chart" id="c4"></div>
+    </div>
+
+    <div class="card"><h2>🧠 分析结论</h2>
+      <div class="concl">
+        <b>${esc(CITY.name)}</b> 近90天累计降雨 <b>${fmt(sum)} mm</b>（降雨 ${wet} 天），最大单日 <b>${fmt(maxDay.r)} mm</b>（${maxDay.t.slice(5)}），
+        大雨日 <b>${heavy}</b> 天、暴雨日 <b>${storm}</b> 天，最长连续无雨 <b>${best}</b> 天。
+        估算 5 年一遇 24h 设计雨量约 <b>${fmt(rp.p5)} mm</b>；按 Ψ=${psi0}、F=${F0} ha 估算设计流量 <b>${df0.Q.toFixed(3)} m³/s</b>，初选管径 <b>DN${dnPick(df0.Dmm)}</b>。
+        未来7天预计降雨 <b>${fmt(sumFc)} mm</b>，最大 <b>${fmt(maxFc.r)} mm</b>（${maxFc.t.slice(5)}）。
+        ${storm > 0 ? "⚠️ 近期出现过暴雨，雨水管渠设计需关注极端降雨与重现期校核。" : ""}
+        ${best >= 10 ? `⚠️ 已连续 ${best} 天无有效降雨，注意旱情与绿化补水。` : ""}
+        ${sumFc >= 30 ? "💧 未来一周降雨较多，出行与施工注意排水防涝。" : "🌤️ 未来一周降雨总体温和。"}
+      </div>
+    </div>`;
+
+  // 图表1：近90天
+  const c1 = mkChart("c1");
+  c1.setOption({
+    grid:{ left:44, right:12, top:16, bottom:30 },
+    tooltip:{ trigger:"axis" },
+    dataZoom:[{ type:"inside", start:0, end:100 }],
+    xAxis:{ type:"category", data: hist.map(x => x.t.slice(5).replace("-","/")), axisLabel:{ fontSize:10, color:"#8aa3ad" } },
+    yAxis:{ type:"value", name:"mm", nameTextStyle:{ color:"#8aa3ad" }, axisLabel:{ color:"#8aa3ad" } },
+    series:[{ type:"bar", data: hist.map(x => ({ value: +x.r.toFixed(1), itemStyle:{ color: grade(x.r).c } })), barMaxWidth:12 }]
+  });
+  // 图表2：重现期
+  const c2 = mkChart("c2");
+  c2.setOption({
+    grid:{ left:44, right:12, top:16, bottom:30 },
+    tooltip:{ trigger:"axis" },
+    xAxis:{ type:"category", data:["2 年一遇","5 年一遇","10 年一遇","20 年一遇"], axisLabel:{ fontSize:11, color:"#8aa3ad" } },
+    yAxis:{ type:"value", name:"24h 设计雨量 mm", nameTextStyle:{ color:"#8aa3ad" }, axisLabel:{ color:"#8aa3ad" } },
+    series:[{
+      type:"bar", barMaxWidth:48,
+      data:[
+        { value:+rp.p2.toFixed(1), itemStyle:{ color:"#7dd3fc" } },
+        { value:+rp.p5.toFixed(1), itemStyle:{ color:"#0ea5e9" } },
+        { value:+rp.p10.toFixed(1), itemStyle:{ color:"#0369a1" } },
+        { value:+rp.p20.toFixed(1), itemStyle:{ color:"#0c4a6e" } }
+      ],
+      label:{ show:true, position:"top", fontSize:12, color:"#0f3d4d", formatter:p => p.value + " mm" }
+    }]
+  });
+  // 图表3：未来7天
+  const c3 = mkChart("c3");
+  c3.setOption({
+    grid:{ left:44, right:44, top:24, bottom:28 },
+    tooltip:{ trigger:"axis" },
+    legend:{ data:["降雨量","最高温"], textStyle:{ fontSize:11, color:"#8aa3ad" }, top:0 },
+    xAxis:{ type:"category", data: fc.map(x => x.t.slice(5).replace("-","/")), axisLabel:{ fontSize:11, color:"#8aa3ad" } },
+    yAxis:[
+      { type:"value", name:"mm", nameTextStyle:{ color:"#8aa3ad" }, axisLabel:{ color:"#8aa3ad" } },
+      { type:"value", name:"°C", nameTextStyle:{ color:"#8aa3ad" }, axisLabel:{ color:"#8aa3ad" } }
+    ],
+    series:[
+      { name:"降雨量", type:"bar", data: fc.map(x => ({ value:+x.r.toFixed(1), itemStyle:{ color: grade(x.r).c } })), barMaxWidth:40 },
+      { name:"最高温", type:"line", yAxisIndex:1, smooth:true, data: fc.map(x => Math.round(x.h)), lineStyle:{ color:"#f59e0b" }, itemStyle:{ color:"#f59e0b" } }
+    ]
+  });
+  // 图表4：逐小时
+  const hr = h.hourly;
+  const hrData = hr.time.map((t, i) => ({ t: t.slice(5, 16), r: hr.precipitation[i] || 0 }));
+  const c4 = mkChart("c4");
+  c4.setOption({
+    grid:{ left:44, right:12, top:16, bottom:30 },
+    tooltip:{ trigger:"axis" },
+    xAxis:{ type:"category", data: hrData.map(x => x.t), axisLabel:{ fontSize:10, color:"#8aa3ad", interval:5 } },
+    yAxis:{ type:"value", name:"mm", nameTextStyle:{ color:"#8aa3ad" }, axisLabel:{ color:"#8aa3ad" } },
+    series:[{ type:"bar", data: hrData.map(x => ({ value:+x.r.toFixed(2), itemStyle:{ color: grade(x.r).c } })), barMaxWidth:3 }]
+  });
+
+  // 计算器状态 + 导出数据快照
+  window._flow = { rp };
+  window._last = { hist, fc, rp, sum, maxDay, storm, heavy, wet, best, sumFc, maxFc, city: CITY.name };
+  qTouched = false;
+  calcFlow();
+}
+
+let qTouched = false;   // 用户是否手动改过 q（改过后不再自动联动）
+function calcFlow(fromQ){
+  const psi = +$("#psi").value, F = +$("#Fha").value, T = +$("#Tsel").value;
+  const rp = (window._flow || { rp: { p2:0, p5:0, p10:0, p20:0 } }).rp;
+  const P = T === 2 ? rp.p2 : T === 5 ? rp.p5 : T === 10 ? rp.p10 : rp.p20;
+  if(fromQ) qTouched = true;
+  if(!fromQ && !qTouched) $("#q").value = (P / 24).toFixed(1);
+  const qOverride = +$("#q").value;
+  const df = designFlow(P, psi, F);
+  $("#psiV").textContent = psi.toFixed(2) + "（绿地/道路混合，可参考 GB50014）";
+  $("#FhaV").textContent = F.toFixed(1) + " ha（示例小区）";
+  $("#TV").textContent = T + " 年一遇 24h 设计雨量 " + fmt(P) + " mm";
+  $("#qV").textContent = qOverride.toFixed(1) + " mm/h（可手动覆盖）";
+  $("#calcResult").innerHTML = `
+    <div>设计流量 <span class="big">Q = ${df.Q.toFixed(3)} m³/s</span>，初选管径 <span class="big">DN${dnPick(df.Dmm)}</span>
+      <span style="font-size:12px;color:var(--muted)">（按满流圆管 v=1.0m/s 估算）</span></div>
+    <div class="eq">Q = Ψ·q·F = ${psi} × ${qOverride.toFixed(1)} mm/h × ${F} ha × 10 / 3600 = ${df.Q.toFixed(3)} m³/s</div>`;
+}
+
+/* ---------- 导出 ---------- */
+function exportJSON(){
+  const data = {
+    city: CITY.name, lat: CITY.lat, lng: CITY.lng,
+    generatedAt: new Date().toISOString(),
+    disclaimer: "基于公开气象数据与近90天样本的初步估算，正式设计需采用当地多年暴雨资料与规范方法。",
+    ...window._last
+  };
+  download("analysis_" + CITY.name + ".json", JSON.stringify(data, null, 2), "application/json");
+}
+function exportCSV(){
+  const rows = window._last ? window._last.hist : [];
+  if(!rows.length){ alert("暂无数据"); return; }
+  const csv = "date,rainfall_mm\n" + rows.map(r => r.t.slice(0,10) + "," + r.r.toFixed(1)).join("\n");
+  download("rainfall_" + CITY.name + ".csv", csv, "text/csv");
+}
+function download(name, content, type){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([content], { type }));
+  a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+}
+
+load();
+</script>
+</body>
+</html>
