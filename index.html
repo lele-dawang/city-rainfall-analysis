@@ -89,8 +89,8 @@
   </div>
   <div id="app"><div class="state"><div class="spin"></div><h2 style="font-size:15px">正在获取降雨数据…</h2></div></div>
   <footer>
-    <div style="margin-bottom:6px;color:var(--ink2)">v2.1 · © 2026 乐乐大王 · 除本人授权外禁止商用</div>
-    说明：本看板为个人学习项目，重现期与设计流量为基于近90天样本的<b>初步估算</b>（超阈值法拟合指数分布），
+    <div style="margin-bottom:6px;color:var(--ink2)">v2.3 快加载版 · © 2026 乐乐大王 · 除本人授权外禁止商用</div>
+    说明：本看板为个人学习项目，重现期与设计流量为基于近 5 年历史数据（ERA5 再分析）的<b>估算</b>（超阈值法拟合指数分布），
     正式设计应采用当地多年实测暴雨资料与当地暴雨强度公式（GB50014-2021《室外排水设计标准》）。<br>
     数据来源 Open-Meteo（CC BY 4.0）
   </footer>
@@ -133,7 +133,7 @@ function designFlow(Pmm24, psi, Fha){
   const Q = psi * q * Fha * 10 / 3600;     // m³/s（q mm/h→m/h /1000，F ha→m² ×10000，/3600）
   const v = 1.0;                           // m/s，满流圆管初选流速
   const Dm = Q > 0 ? Math.sqrt(4 * Q / (Math.PI * v)) : 0;
-  return { q: q, Q: Q, Dmm: Math.round(Dm * 1000) };
+  return { q: Math.round(q * 10) / 10, Q: Math.round(Q * 1000) / 1000, Dmm: Math.round(Dm * 1000) };
 }
 const DN = [75,100,150,200,250,300,400,500,600,800,1000,1200];
 function dnPick(Dmm){ for(const d of DN) if(Dmm <= d) return d; return DN[DN.length-1]; }
@@ -151,11 +151,15 @@ async function load(){
   $("#app").innerHTML = `<div class="state"><div class="spin"></div><h2 style="font-size:15px">正在获取 ${esc(CITY.name)} 降雨数据…</h2></div>`;
   try{
     const base = `https://api.open-meteo.com/v1/forecast?latitude=${CITY.lat}&longitude=${CITY.lng}&timezone=Asia%2FShanghai`;
+    // 快速路径：90天历史+7天预报+逐小时（约2秒），先渲染出页面
     const [d, h] = await Promise.all([
       fetchJ(base + "&daily=precipitation_sum,temperature_2m_max,temperature_2m_min,precipitation_probability_max&past_days=90&forecast_days=7"),
       fetchJ(base + "&hourly=precipitation,precipitation_probability,temperature_2m&past_days=7&forecast_days=1")
     ]);
-    render(d, h);
+    _dh = { d, h };
+    HIST = { kind: "90d", note: "" };
+    render({ daily: { time: d.daily.time.slice(0, 90), precipitation_sum: d.daily.precipitation_sum.slice(0, 90) } }, d, h);
+    loadHistory();   // 后台加载 5 年历史（带缓存），到达后自动升级重现期
   }catch(e){
     $("#app").innerHTML = `<div class="state"><h2 style="font-size:15px">😥 数据获取失败，请检查网络</h2>
       <p style="font-size:13px;margin-top:6px">${esc(e.message)}</p>
@@ -163,11 +167,63 @@ async function load(){
   }
 }
 
-function render(d, h){
+let HIST = { kind: "90d", note: "" };   // 历史数据状态：90d(快) / 5y(升级) / 失败降级
+let _dh = null;                          // 最近一次 d/h，供历史重试
+
+async function loadHistory(){
+  const { d, h } = _dh || {};
+  if(!d) return;
+  const now = new Date(Date.now() - 864e5);
+  const y5 = new Date(now.getFullYear() - 5, now.getMonth(), now.getDate());
+  const D = x => `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${CITY.lat}&longitude=${CITY.lng}&start_date=${D(y5)}&end_date=${D(now)}&daily=precipitation_sum&timezone=Asia%2FShanghai`;
+  try{
+    const a = await cachedFetch(url, 6 * 3600e3);   // 6 小时本地缓存，二次打开秒级
+    HIST = { kind: "5y", note: "" };
+    render(a, d, h);
+  }catch(e){
+    HIST = { kind: "90d", note: "5 年历史数据加载失败（网络原因），重现期暂基于近90天样本估算" };
+    render({ daily: { time: d.daily.time.slice(0, 90), precipitation_sum: d.daily.precipitation_sum.slice(0, 90) } }, d, h);
+  }
+}
+
+async function cachedFetch(url, ttl){
+  const key = "hist_" + url;
+  try{
+    const c = JSON.parse(localStorage.getItem(key) || "null");
+    if(c && c.data && Date.now() - c.ts < ttl) return c.data;   // 命中缓存
+  }catch(e){}
+  const data = await fetchTimeout(url, 15000);
+  try{
+    localStorage.setItem(key, JSON.stringify({ ts: Date.now(), data }));
+  }catch(e){   // 超出配额：清理旧缓存后重存
+    try{
+      for(const k of Object.keys(localStorage)) if(k.startsWith("hist_")) localStorage.removeItem(k);
+      localStorage.setItem(key, JSON.stringify({ ts: Date.now(), data }));
+    }catch(e2){}
+  }
+  return data;
+}
+
+async function fetchTimeout(url, ms){
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), ms);
+  try{
+    const r = await fetch(url, { signal: ctl.signal });
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    return await r.json();
+  }finally{ clearTimeout(t); }
+}
+
+function render(a, d, h){
+  // 保留用户正在调整的计算器参数（历史数据到达后的二次渲染不重置）
+  const sv = {};
+  for(const id of ["psi", "Fha", "Tsel", "q"]){ const el = document.getElementById(id); if(el) sv[id] = el.value; }
+  // 历史：5 年档案数据（重现期依据）；近 90 天切片（统计与图表）
+  const histAll = a.daily.time.map((t, i) => ({ t, r: a.daily.precipitation_sum[i] || 0 }));
+  const hist = histAll.slice(-90);
   const days = d.daily;
-  const n30 = days.time.length - 7;
-  const hist = days.time.slice(0, n30).map((t, i) => ({ t, r: days.precipitation_sum[i] || 0 }));
-  const fc = days.time.slice(n30).map((t, i) => ({ t, r: days.precipitation_sum[n30 + i] || 0, h: days.temperature_2m_max[n30 + i] || 0 }));
+  const fc = days.time.map((t, i) => ({ t, r: days.precipitation_sum[i] || 0, h: days.temperature_2m_max[i] || 0 }));
 
   // 统计指标
   const sum = hist.reduce((s, x) => s + x.r, 0);
@@ -180,8 +236,9 @@ function render(d, h){
   const sumFc = fc.reduce((s, x) => s + x.r, 0);
   const maxFc = fc.reduce((a, b) => b.r > a.r ? b : a, { r: 0, t: fc[0].t });
 
-  // 重现期 + 设计流量
-  const rp = returnPeriods(hist.map(x => x.r));
+  // 重现期（基于 5 年历史）+ 设计流量
+  const rp = returnPeriods(histAll.map(x => x.r));
+  const years = (histAll.length / 365.25).toFixed(1);
   const psi0 = 0.6, F0 = 5, T0 = 5;
   const df0 = designFlow(T0 === 5 ? rp.p5 : (T0 === 2 ? rp.p2 : (T0 === 10 ? rp.p10 : rp.p20)), psi0, F0);
 
@@ -193,6 +250,7 @@ function render(d, h){
       <div class="kpi"><div class="l">大雨日(25-50mm)</div><div class="v">${heavy}<small> 天</small></div></div>
       <div class="kpi"><div class="l">暴雨日(≥50mm)</div><div class="v">${storm}<small> 天</small></div></div>
       <div class="kpi"><div class="l">最长连续无雨</div><div class="v">${best}<small> 天</small></div></div>
+      <div class="kpi"><div class="l">历史样本(重现期依据)</div><div class="v">${HIST.kind === "5y" ? years : "90"}<small> ${HIST.kind === "5y" ? "年" : "天"}</small></div><div class="l" style="margin-top:2px">${histAll.length} 天 · ${rp.events} 场降雨</div></div>
     </div>
 
     <div class="card"><h2>📊 近90天逐日降雨量（${esc(CITY.name)}）</h2>
@@ -202,9 +260,12 @@ function render(d, h){
 
     <div class="card"><h2>📈 设计暴雨重现期估算（超阈值法 + 指数分布）</h2>
       <div class="chart" id="c2"></div>
-      <div class="note">基于近90天样本、阈值 u=${rp.beta > 0 ? 5 : 0}mm，共识别 ${rp.events} 场降雨事件。
+      <div class="note">${HIST.kind === "5y"
+        ? `基于近 ${years} 年历史样本（${histAll[0].t} ~ ${histAll[histAll.length-1].t}，共 ${histAll.length} 天，ERA5 再分析）`
+        : "基于近90天样本（预报模型历史回溯）"}，阈值 u=5mm，共识别 ${rp.events} 场降雨事件。
         指数分布拟合 x_T = u + β·ln(T·λ)，β=${rp.beta.toFixed(1)}mm，年均事件率 λ≈${rp.lam.toFixed(1)} 次/年。
-        正式设计请采用当地多年暴雨资料（GB50014-2021）。</div>
+        正式设计请采用当地多年暴雨资料与当地暴雨强度公式（GB50014-2021）。
+        ${HIST.note ? `<br><span style="color:#b45309">⚠️ ${esc(HIST.note)} <button onclick="loadHistory()" style="border:none;background:var(--accent);color:#fff;border-radius:8px;padding:2px 12px;cursor:pointer;font-size:12px">重试</button></span>` : ""}</div>
     </div>
 
     <div class="card"><h2>🔧 雨水设计流量估算（推理公式 Q = Ψ·q·F）</h2>
@@ -234,13 +295,16 @@ function render(d, h){
       <div class="concl">
         <b>${esc(CITY.name)}</b> 近90天累计降雨 <b>${fmt(sum)} mm</b>（降雨 ${wet} 天），最大单日 <b>${fmt(maxDay.r)} mm</b>（${maxDay.t.slice(5)}），
         大雨日 <b>${heavy}</b> 天、暴雨日 <b>${storm}</b> 天，最长连续无雨 <b>${best}</b> 天。
-        估算 5 年一遇 24h 设计雨量约 <b>${fmt(rp.p5)} mm</b>；按 Ψ=${psi0}、F=${F0} ha 估算设计流量 <b>${df0.Q.toFixed(3)} m³/s</b>，初选管径 <b>DN${dnPick(df0.Dmm)}</b>。
+        ${HIST.kind === "5y" ? `基于近 ${years} 年历史样本估算，` : (HIST.note ? "历史数据加载失败，基于近90天样本估算，" : "基于近90天样本估算（5年历史加载中…），")}5 年一遇 24h 设计雨量约 <b>${fmt(rp.p5)} mm</b>；按 Ψ=${psi0}、F=${F0} ha 估算设计流量 <b>${df0.Q.toFixed(3)} m³/s</b>，初选管径 <b>DN${dnPick(df0.Dmm)}</b>。
         未来7天预计降雨 <b>${fmt(sumFc)} mm</b>，最大 <b>${fmt(maxFc.r)} mm</b>（${maxFc.t.slice(5)}）。
         ${storm > 0 ? "⚠️ 近期出现过暴雨，雨水管渠设计需关注极端降雨与重现期校核。" : ""}
         ${best >= 10 ? `⚠️ 已连续 ${best} 天无有效降雨，注意旱情与绿化补水。` : ""}
         ${sumFc >= 30 ? "💧 未来一周降雨较多，出行与施工注意排水防涝。" : "🌤️ 未来一周降雨总体温和。"}
       </div>
     </div>`;
+
+  // 恢复计算器参数（二次渲染不重置用户调整）
+  for(const id in sv){ const el = document.getElementById(id); if(el) el.value = sv[id]; }
 
   // 图表1：近90天
   const c1 = mkChart("c1");
@@ -300,7 +364,7 @@ function render(d, h){
 
   // 计算器状态 + 导出数据快照
   window._flow = { rp };
-  window._last = { hist, fc, rp, sum, maxDay, storm, heavy, wet, best, sumFc, maxFc, city: CITY.name };
+  window._last = { hist: histAll, fc, rp, sum, maxDay, storm, heavy, wet, best, sumFc, maxFc, city: CITY.name };
   qTouched = false;
   calcFlow();
 }
