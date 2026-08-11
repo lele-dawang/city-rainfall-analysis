@@ -1,0 +1,43 @@
+{
+  "city": "北京",
+  "lat": 39.904,
+  "lng": 116.407,
+  "generated_at": "2026-08-11T14:03:26",
+  "sample_days": 90,
+  "window": [
+    "2026-05-13",
+    "2026-08-10"
+  ],
+  "stats": {
+    "total_mm": 245.9,
+    "max_day_mm": 36.5,
+    "max_date": "2026-07-11",
+    "wet_days": 56,
+    "heavy_days": 2,
+    "storm_days": 0,
+    "max_dry_streak": 21
+  },
+  "return_period_24h_mm": {
+    "2": 51.8,
+    "5": 61.1,
+    "10": 68.2,
+    "20": 75.3
+  },
+  "pot": {
+    "threshold_mm": 5.0,
+    "events": 12,
+    "beta": 10.22,
+    "lambda_per_year": 48.7
+  },
+  "design_flow_T5": {
+    "q_mmh": 2.55,
+    "Q_m3s": 0.021,
+    "D_mm": 164,
+    "DN": "DN200",
+    "psi": 0.6,
+    "area_ha": 5.0,
+    "method": "Q = Psi*q*F, q = P5/24 (24h average approx)"
+  },
+  "forecast_7d_mm": 69.3,
+  "disclaimer": "基于近90天样本的初步估算; 正式设计须采用当地多年暴雨资料与当地暴雨强度公式 (GB50014-2021)。"
+}
