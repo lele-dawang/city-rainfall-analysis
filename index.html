@@ -8,7 +8,10 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>城市雨水情与排水设计分析 · 给排水数据项目</title>
-<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+<script>
+/* ECharts 动态加载：staticfile(主) → jsdelivr(备) → bootcdn(兜底) 三级降级，不阻塞页面渲染 */
+(function(){var urls=["https://cdn.staticfile.org/echarts/5.4.3/echarts.min.js","https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js","https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"],i=0;function l(){if(window.echarts)return;if(i>=urls.length)return console.error("ECharts CDN 全部加载失败");var s=document.createElement("script");s.src=urls[i++];s.onload=function(){window.echarts||l()};s.onerror=l;document.head.appendChild(s)}l();})();
+</script>
 <style>
   :root{ --ink:#0f3d4d; --ink2:#4a6b78; --muted:#8aa3ad; --accent:#0e7490; --accent2:#06b6d4; --warn:#f59e0b; --card:#fff; --line:#e3eef2; }
   *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
@@ -97,7 +100,7 @@
   </div>
   <div id="app"><div class="state"><div class="spin"></div><h2 style="font-size:15px">正在获取降雨数据…</h2></div></div>
   <footer>
-    <div style="margin-bottom:6px;color:var(--ink2)">v2.3 快加载版 · © 2026 乐乐大王 · 除本人授权外禁止商用</div>
+    <div style="margin-bottom:6px;color:var(--ink2)">v2.4 移动提速版 · © 2026 乐乐大王 · 除本人授权外禁止商用</div>
     说明：本看板为个人学习项目，重现期与设计流量为基于近 5 年历史数据（ERA5 再分析）的<b>估算</b>（超阈值法拟合指数分布），
     正式设计应采用当地多年实测暴雨资料与当地暴雨强度公式（GB50014-2021《室外排水设计标准》）。<br>
     数据来源 Open-Meteo（CC BY 4.0）
@@ -233,6 +236,8 @@ async function fetchTimeout(url, ms){
 }
 
 function render(a, d, h){
+  // 等待 ECharts 异步加载完成（动态 CDN 加载，不阻塞页面）
+  if(!window.echarts){ setTimeout(() => render(a, d, h), 200); return; }
   // 保留用户正在调整的计算器参数（历史数据到达后的二次渲染不重置）
   const sv = {};
   for(const id of ["psi", "Fha", "Tsel", "q"]){ const el = document.getElementById(id); if(el) sv[id] = el.value; }
