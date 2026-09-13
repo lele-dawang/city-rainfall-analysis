@@ -97,11 +97,10 @@
     <button onclick="load()">🔄 重新加载</button>
     <button onclick="exportJSON()">⬇ 导出分析 JSON</button>
     <button onclick="exportCSV()">⬇ 导出降雨数据 CSV</button>
-    <button onclick="shareCard()" style="background:linear-gradient(135deg,#f59e0b,#f97316)">📸 生成分享卡片</button>
   </div>
   <div id="app"><div class="state"><div class="spin"></div><h2 style="font-size:15px">正在获取降雨数据…</h2></div></div>
   <footer>
-    <div style="margin-bottom:6px;color:var(--ink2)">v2.5 分享卡片版 · © 2026 乐乐大王 · 除本人授权外禁止商用</div>
+    <div style="margin-bottom:6px;color:var(--ink2)">v2.4 移动提速版 · © 2026 乐乐大王 · 除本人授权外禁止商用</div>
     说明：本看板为个人学习项目，重现期与设计流量为基于近 5 年历史数据（ERA5 再分析）的<b>估算</b>（超阈值法拟合指数分布），
     正式设计应采用当地多年实测暴雨资料与当地暴雨强度公式（GB50014-2021《室外排水设计标准》）。<br>
     数据来源 Open-Meteo（CC BY 4.0）
@@ -409,85 +408,6 @@ function calcFlow(fromQ){
     <div>设计流量 <span class="big">Q = ${df.Q.toFixed(3)} m³/s</span>，初选管径 <span class="big">DN${dnPick(df.Dmm)}</span>
       <span style="font-size:12px;color:var(--muted)">（按满流圆管 v=1.0m/s 估算）</span></div>
     <div class="eq">Q = Ψ·q·F = ${psi} × ${qOverride.toFixed(1)} mm/h × ${F} ha × 10 / 3600 = ${df.Q.toFixed(3)} m³/s</div>`;
-}
-
-/* ---------- 分享卡片：一键生成 PNG（发朋友圈/社交媒体） ---------- */
-function shareCard(){
-  const L = window._last;
-  if(!L || !L.rp){ alert("数据还在加载，请稍候几秒再试"); return; }
-  const W = 750, H = 1050, S = 2;                    // 2x 高清导出
-  const cv = document.createElement("canvas");
-  cv.width = W * S; cv.height = H * S;
-  const c = cv.getContext("2d");
-  c.scale(S, S);
-  const F = '"Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif';
-  const rr = (x,y,w,h,r) => { c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); };
-  const txt = (s,x,y,font,color,align) => { c.font=font; c.fillStyle=color; c.textAlign=align||"left"; c.fillText(s,x,y); };
-
-  // 背景渐变 + 水波装饰
-  const bg = c.createLinearGradient(0,0,0,H);
-  bg.addColorStop(0,"#0a3543"); bg.addColorStop(.55,"#0e7490"); bg.addColorStop(1,"#22a7c4");
-  c.fillStyle = bg; c.fillRect(0,0,W,H);
-  c.globalAlpha = .07; c.fillStyle = "#fff";
-  [[660,80,160],[60,1000,190],[690,930,100]].forEach(p => { c.beginPath(); c.arc(p[0],p[1],p[2],0,7); c.fill(); });
-  c.globalAlpha = 1;
-
-  // 头部
-  txt("城市雨水情与排水设计分析", 50, 78, `500 22px ${F}`, "rgba(255,255,255,.72)");
-  txt(CITY.name, 50, 155, `bold 64px ${F}`, "#fff");
-  const hh = L.hist || [];
-  if(hh.length) txt(`${hh[0].t.slice(0,7)} ~ ${hh[hh.length-1].t.slice(0,7)} · ${hh.length} 天 ERA5 再分析`, 50, 196, `400 20px ${F}`, "rgba(255,255,255,.62)");
-
-  // 白色数据卡
-  c.fillStyle = "rgba(255,255,255,.97)";
-  rr(45, 230, 660, 495, 30); c.fill();
-  txt("近 90 天降雨概况", 85, 285, `bold 24px ${F}`, "#0f3d4d");
-
-  // KPI 2×2
-  [["近 90 天累计降雨", fmt(L.sum) + " mm"],
-   ["最大单日降雨", fmt(L.maxDay.r) + " mm  " + (L.maxDay.t||"").slice(5)],
-   ["降雨天数 (≥0.1mm)", L.wet + " 天"],
-   ["最长连续无雨", L.best + " 天"]].forEach((k,i) => {
-    const x = 85 + (i%2)*310, y = 335 + Math.floor(i/2)*95;
-    c.fillStyle = "#e6f4f8"; rr(x, y-28, 290, 78, 16); c.fill();
-    txt(k[0], x+18, y, `400 19px ${F}`, "#4a6b78");
-    txt(k[1], x+18, y+34, `bold 27px ${F}`, "#0e7490");
-  });
-
-  c.strokeStyle = "#dbeaf0"; c.lineWidth = 2;
-  c.beginPath(); c.moveTo(85, 545); c.lineTo(665, 545); c.stroke();
-
-  // 重现期 + 设计流量（跟随当前计算器参数）
-  const psi = (+$("#psi").value) || .6, Fha = (+$("#Fha").value) || 5, T = +($("#Tsel").value) || 5;
-  const P24 = T===2 ? L.rp.p2 : T===10 ? L.rp.p10 : T===20 ? L.rp.p20 : L.rp.p5;
-  const df = designFlow(P24, psi, Fha), dn = dnPick(df.Dmm);
-  txt(`${T} 年一遇 24h 设计雨量`, 85, 590, `400 21px ${F}`, "#4a6b78");
-  txt(fmt(P24) + " mm", 85, 634, `bold 40px ${F}`, "#0e7490");
-  txt(`雨水设计流量 Q = ${df.Q.toFixed(3)} m³/s  ·  初选管径 DN${dn}`, 85, 680, `bold 23px ${F}`, "#0f3d4d");
-  txt(`（径流系数 Ψ=${psi} · 汇水面积 ${Fha} ha · 推理公式 Q = Ψ·q·F）`, 85, 708, `400 18px ${F}`, "#8aa3ad");
-
-  // 底部署名
-  txt("yushuiqing.surge.sh", 50, 800, `bold 34px ${F}`, "#fff");
-  txt("在线交互看板 · 数据来源 Open-Meteo (CC BY 4.0)", 50, 838, `400 20px ${F}`, "rgba(255,255,255,.75)");
-  txt("© 2026 乐乐大王 · 个人学习项目 · 除本人授权外禁止商用", 50, 872, `400 18px ${F}`, "rgba(255,255,255,.55)");
-
-  // 预览弹层（手机长按保存 / 电脑点击下载）
-  const url = cv.toDataURL("image/png");
-  const ov = document.createElement("div");
-  ov.style.cssText = "position:fixed;inset:0;background:rgba(6,20,26,.9);z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px";
-  ov.innerHTML = `<img src="${url}" style="max-width:100%;max-height:74vh;border-radius:14px;box-shadow:0 14px 50px rgba(0,0,0,.6)">
-    <div style="color:#fff;font-size:13px;text-align:center;line-height:1.8">📱 手机：长按图片 → 保存到相册<br>💻 电脑：点「下载 PNG」</div>
-    <div style="display:flex;gap:10px">
-      <button id="dlCard" style="padding:10px 22px;border:none;border-radius:10px;background:linear-gradient(135deg,#0e7490,#06b6d4);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">⬇ 下载 PNG</button>
-      <button id="closeCard" style="padding:10px 22px;border:none;border-radius:10px;background:#334;color:#fff;font-size:14px;cursor:pointer;font-family:inherit">关闭</button>
-    </div>`;
-  document.body.appendChild(ov);
-  const dl = document.createElement("a");
-  dl.href = url;
-  dl.download = `降雨分析_${CITY.name}_${new Date().toISOString().slice(0,10)}.png`;
-  $("#dlCard").onclick = () => dl.click();
-  $("#closeCard").onclick = () => ov.remove();
-  ov.onclick = e => { if(e.target === ov) ov.remove(); };
 }
 
 /* ---------- 导出 ---------- */
