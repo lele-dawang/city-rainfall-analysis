@@ -39,7 +39,7 @@ python fetch_rain.py 北京 39.904 116.407 8
 ## 项目自检
 
 ```bash
-python verify.py    # 28 项：前端静态断言 + GitHub Actions 工作流校验 + Python/JS 双端数值交叉验证 + 数据文件完整性
+python verify.py    # 或 npm test —— 28 项断言：前端静态校验 + 工作流校验 + Python/JS 双端数值交叉验证 + 数据完整性
 ```
 
 ## 数据自动更新
