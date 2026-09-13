@@ -2,6 +2,8 @@
 
 [English](README_EN.md) | **中文**
 
+<img src="assets/screenshot-mobile.jpg" width="300" alt="移动端界面预览">
+
 给排水科学与工程专业个人项目：基于公开气象数据的**城市降雨分析与雨水排水设计估算**。
 
 ## 项目亮点
@@ -70,7 +72,12 @@ Python（urllib/json/csv，无第三方依赖）· HTML/CSS/JS · ECharts 5 · O
 ## 版权与许可
 
 © 2026 乐乐大王 · 除本人授权外禁止商用
-本项目为个人学习作品，著作权自创作完成时依法自动产生。数据来源 Open-Meteo（CC BY 4.0），使用时请保留数据来源署名。
+
+本项目采用 [PolyForm Noncommercial License 1.0.0](LICENSE)（非商业许可）：
+- ✅ 允许：个人学习、教学、学术研究等**非商业性**使用、修改与分享（需保留本许可与署名）
+- ❌ 禁止：任何**商业用途**（如需商用请联系作者获得授权）
+
+数据来源 Open-Meteo（CC BY 4.0），使用时请保留数据来源署名。
 
 ## 待办（v4 方向）
 
