@@ -2,42 +2,52 @@
   "city": "北京",
   "lat": 39.904,
   "lng": 116.407,
-  "generated_at": "2026-08-11T14:03:26",
-  "sample_days": 90,
+  "generated_at": "2026-09-13T19:25:13",
+  "sample_years": 5.0,
+  "sample_days": 1826,
   "window": [
-    "2026-05-13",
-    "2026-08-10"
+    "2021-09-13",
+    "2026-09-12"
   ],
-  "stats": {
-    "total_mm": 245.9,
+  "stats_90d": {
+    "total_mm": 373.5,
     "max_day_mm": 36.5,
     "max_date": "2026-07-11",
-    "wet_days": 56,
-    "heavy_days": 2,
+    "wet_days": 66,
+    "heavy_days": 4,
     "storm_days": 0,
-    "max_dry_streak": 21
+    "max_dry_streak": 9
+  },
+  "stats_history": {
+    "total_mm": 3403.1,
+    "max_day_mm": 87.7,
+    "max_date": "2024-08-09",
+    "wet_days": 526,
+    "heavy_days": 27,
+    "storm_days": 8,
+    "max_dry_streak": 65
   },
   "return_period_24h_mm": {
-    "2": 51.8,
-    "5": 61.1,
-    "10": 68.2,
-    "20": 75.3
+    "2": 57.9,
+    "5": 69.5,
+    "10": 78.2,
+    "20": 86.9
   },
   "pot": {
     "threshold_mm": 5.0,
-    "events": 12,
-    "beta": 10.22,
-    "lambda_per_year": 48.7
+    "events": 165,
+    "beta": 12.62,
+    "lambda_per_year": 33.0
   },
   "design_flow_T5": {
-    "q_mmh": 2.55,
-    "Q_m3s": 0.021,
-    "D_mm": 164,
+    "q_mmh": 2.9,
+    "Q_m3s": 0.024,
+    "D_mm": 175,
     "DN": "DN200",
     "psi": 0.6,
     "area_ha": 5.0,
     "method": "Q = Psi*q*F, q = P5/24 (24h average approx)"
   },
-  "forecast_7d_mm": 69.3,
-  "disclaimer": "基于近90天样本的初步估算; 正式设计须采用当地多年暴雨资料与当地暴雨强度公式 (GB50014-2021)。"
+  "forecast_7d_mm": 0.0,
+  "disclaimer": "基于近 5 年历史数据(ERA5 再分析)的估算; 正式设计仍须采用当地多年暴雨资料与当地暴雨强度公式 (GB50014-2021)。"
 }
