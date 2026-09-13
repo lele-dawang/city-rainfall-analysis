@@ -50,8 +50,8 @@ python verify.py    # 或 npm test —— 28 项断言：前端静态校验 + �
 
 ## 在线访问
 
-- 主地址：https://yushuiqing.surge.sh
-- 备用地址：https://lele-dawang.github.io/city-rainfall-analysis/（GitHub Pages，主地址异常时可访问）
+- 主地址：https://lele-dawang.github.io/city-rainfall-analysis/
+- 备用地址：https://yushuiqing.surge.sh（surge.sh，主地址异常时可访问）
 
 ## 分析方法与假设（如实声明）
 
@@ -67,7 +67,7 @@ python verify.py    # 或 npm test —— 28 项断言：前端静态校验 + �
 
 ## 技术栈
 
-Python（urllib/json/csv，无第三方依赖）· HTML/CSS/JS · ECharts 5 · Open-Meteo API · surge.sh 部署
+Python（urllib/json/csv，无第三方依赖）· HTML/CSS/JS · ECharts 5 · Open-Meteo API · GitHub Pages / surge.sh 双通道部署
 
 ## 版权与许可
 
