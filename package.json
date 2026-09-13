@@ -1,0 +1,12 @@
+{
+  "name": "city-rainfall-analysis",
+  "version": "2.4.0",
+  "private": true,
+  "description": "城市雨水情与排水设计分析看板：自检入口（实际校验逻辑在 verify.py，纯 Python 标准库）",
+  "scripts": {
+    "test": "python verify.py",
+    "verify": "python verify.py",
+    "dev": "python -m http.server 8001",
+    "sync": "python ../gh-sync.py"
+  }
+}
