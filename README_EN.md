@@ -2,6 +2,8 @@
 
 **English** | [中文](README.md)
 
+<img src="assets/screenshot-mobile.jpg" width="300" alt="Mobile UI preview">
+
 An open-source dashboard that turns public climate data into **rainfall statistics and drainage design calculations** for cities — built as a water supply & drainage engineering student project.
 
 > **Why it's different**: most "rain" visualizations just show weather. This one goes one step further — it estimates **design storm rainfall for return periods** (2/5/10/20 years) from 5 years of ERA5 reanalysis data, and computes **stormwater design flow** using the rational method `Q = Ψ·q·F` per Chinese standard **GB50014-2021**.
@@ -65,4 +67,6 @@ Python (urllib/json/csv, no third-party deps) · HTML/CSS/JS · ECharts 5 · Ope
 
 Data source: [Open-Meteo](https://open-meteo.com) (CC BY 4.0) — please keep the attribution.
 
-© 2026 乐乐大王 (Lele Dawang). Personal learning project — **non-commercial use only unless authorized**.
+Licensed under the [**PolyForm Noncommercial License 1.0.0**](LICENSE) — free to use, modify and share for **noncommercial purposes** (personal learning, teaching, research) with attribution. **Commercial use is not permitted** without the author's authorization.
+
+© 2026 乐乐大王 (Lele Dawang). All rights reserved.
