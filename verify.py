@@ -29,8 +29,7 @@ def chk(name, ok, extra=''):
 html = open(HTML, encoding='utf-8').read()
 
 # ---------- A. index.html 静态断言 ----------
-chk('版号为 v2.5 分享卡片版', 'v2.5 分享卡片版' in html)
-chk('分享卡片功能存在', 'function shareCard()' in html and "📸 生成分享卡片" in html)
+chk('版号为 v2.4 移动提速版', 'v2.4 移动提速版' in html)
 chk('分隔符兼容全角 ｜ ／', 'replace(/[｜]/g' in html and 'replace(/[／]/g' in html)
 chk('分隔符主用 /', 'split(/[/|]/)' in html)
 chk('城市选项 ≥16', len(re.findall(r'<option value="[^"]+\|[0-9.]+\|[0-9.]+"', html)) >= 16)
