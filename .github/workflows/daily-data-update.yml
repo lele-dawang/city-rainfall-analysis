@@ -1,0 +1,42 @@
+name: 每日降雨数据自动更新
+
+# 每天北京时间 06:00（UTC 22:00）自动采集最新降雨数据并提交
+# 也可在 Actions 页面手动触发（workflow_dispatch）
+on:
+  schedule:
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 采集各城市最新降雨数据（近 5 年 + 未来 7 天预报）
+        run: |
+          python fetch_rain.py 张家口 40.768 114.886 5
+          python fetch_rain.py 北京 39.904 116.407 5
+          python fetch_rain.py 天津 39.084 117.201 5
+
+      - name: 提交数据更新
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/ analysis_*.json
+          if git diff --cached --quiet; then
+            echo "数据无变化，跳过提交"
+          else
+            git commit -m "data: 每日降雨数据自动更新 $(date -u +'%Y-%m-%d')"
+            git push
+            echo "已提交并推送数据更新"
+          fi
