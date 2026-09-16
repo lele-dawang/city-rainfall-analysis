@@ -2,12 +2,12 @@
   "city": "张家口",
   "lat": 40.768,
   "lng": 114.886,
-  "generated_at": "2026-09-15T00:21:29",
+  "generated_at": "2026-09-16T00:00:14",
   "sample_years": 5.0,
   "sample_days": 1826,
   "window": [
-    "2021-09-15",
-    "2026-09-14"
+    "2021-09-16",
+    "2026-09-15"
   ],
   "stats_90d": {
     "total_mm": 185.8,
@@ -19,10 +19,10 @@
     "max_dry_streak": 9
   },
   "stats_history": {
-    "total_mm": 2335.3,
+    "total_mm": 2331.2,
     "max_day_mm": 65.0,
     "max_date": "2025-08-27",
-    "wet_days": 543,
+    "wet_days": 542,
     "heavy_days": 12,
     "storm_days": 1,
     "max_dry_streak": 65
@@ -48,6 +48,6 @@
     "area_ha": 5.0,
     "method": "Q = Psi*q*F, q = P5/24 (24h average approx)"
   },
-  "forecast_7d_mm": 3.9,
+  "forecast_7d_mm": 12.0,
   "disclaimer": "基于近 5 年历史数据(ERA5 再分析)的估算; 正式设计仍须采用当地多年暴雨资料与当地暴雨强度公式 (GB50014-2021)。"
 }
