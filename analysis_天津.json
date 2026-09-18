@@ -2,18 +2,18 @@
   "city": "天津",
   "lat": 39.084,
   "lng": 117.201,
-  "generated_at": "2026-09-17T23:56:32",
+  "generated_at": "2026-09-18T23:55:34",
   "sample_years": 5.0,
   "sample_days": 1826,
   "window": [
-    "2021-09-17",
-    "2026-09-16"
+    "2021-09-18",
+    "2026-09-17"
   ],
   "stats_90d": {
-    "total_mm": 445.2,
+    "total_mm": 434.4,
     "max_day_mm": 54.1,
     "max_date": "2026-08-26",
-    "wet_days": 61,
+    "wet_days": 60,
     "heavy_days": 3,
     "storm_days": 1,
     "max_dry_streak": 9
@@ -48,6 +48,6 @@
     "area_ha": 5.0,
     "method": "Q = Psi*q*F, q = P5/24 (24h average approx)"
   },
-  "forecast_7d_mm": 5.0,
+  "forecast_7d_mm": 4.1,
   "disclaimer": "基于近 5 年历史数据(ERA5 再分析)的估算; 正式设计仍须采用当地多年暴雨资料与当地暴雨强度公式 (GB50014-2021)。"
 }
