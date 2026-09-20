@@ -2,24 +2,24 @@
   "city": "北京",
   "lat": 39.904,
   "lng": 116.407,
-  "generated_at": "2026-09-19T23:56:27",
+  "generated_at": "2026-09-20T23:54:30",
   "sample_years": 5.0,
   "sample_days": 1826,
   "window": [
-    "2021-09-19",
-    "2026-09-18"
+    "2021-09-20",
+    "2026-09-19"
   ],
   "stats_90d": {
-    "total_mm": 338.2,
+    "total_mm": 338.4,
     "max_day_mm": 36.5,
     "max_date": "2026-07-11",
-    "wet_days": 61,
+    "wet_days": 62,
     "heavy_days": 4,
     "storm_days": 0,
-    "max_dry_streak": 10
+    "max_dry_streak": 11
   },
   "stats_history": {
-    "total_mm": 3398.1,
+    "total_mm": 3381.6,
     "max_day_mm": 87.7,
     "max_date": "2024-08-09",
     "wet_days": 524,
@@ -28,16 +28,16 @@
     "max_dry_streak": 65
   },
   "return_period_24h_mm": {
-    "2": 57.9,
-    "5": 69.5,
+    "2": 57.8,
+    "5": 69.4,
     "10": 78.2,
     "20": 86.9
   },
   "pot": {
     "threshold_mm": 5.0,
-    "events": 165,
-    "beta": 12.62,
-    "lambda_per_year": 33.0
+    "events": 164,
+    "beta": 12.63,
+    "lambda_per_year": 32.8
   },
   "design_flow_T5": {
     "q_mmh": 2.9,
@@ -48,6 +48,6 @@
     "area_ha": 5.0,
     "method": "Q = Psi*q*F, q = P5/24 (24h average approx)"
   },
-  "forecast_7d_mm": 0.9,
+  "forecast_7d_mm": 14.4,
   "disclaimer": "基于近 5 年历史数据(ERA5 再分析)的估算; 正式设计仍须采用当地多年暴雨资料与当地暴雨强度公式 (GB50014-2021)。"
 }
