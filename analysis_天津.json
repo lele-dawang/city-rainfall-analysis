@@ -2,27 +2,27 @@
   "city": "天津",
   "lat": 39.084,
   "lng": 117.201,
-  "generated_at": "2026-10-04T00:22:57",
+  "generated_at": "2026-10-05T00:29:37",
   "sample_years": 5.0,
   "sample_days": 1826,
   "window": [
-    "2021-10-04",
-    "2026-10-03"
+    "2021-10-05",
+    "2026-10-04"
   ],
   "stats_90d": {
-    "total_mm": 404.0,
+    "total_mm": 400.2,
     "max_day_mm": 54.1,
     "max_date": "2026-08-26",
-    "wet_days": 59,
+    "wet_days": 58,
     "heavy_days": 2,
     "storm_days": 1,
     "max_dry_streak": 9
   },
   "stats_history": {
-    "total_mm": 3499.5,
+    "total_mm": 3482.6,
     "max_day_mm": 92.4,
     "max_date": "2024-08-26",
-    "wet_days": 553,
+    "wet_days": 552,
     "heavy_days": 24,
     "storm_days": 9,
     "max_dry_streak": 61
@@ -30,14 +30,14 @@
   "return_period_24h_mm": {
     "2": 59.9,
     "5": 71.9,
-    "10": 81.0,
+    "10": 80.9,
     "20": 90.0
   },
   "pot": {
     "threshold_mm": 5.0,
-    "events": 168,
-    "beta": 13.06,
-    "lambda_per_year": 33.6
+    "events": 167,
+    "beta": 13.07,
+    "lambda_per_year": 33.4
   },
   "design_flow_T5": {
     "q_mmh": 3.0,
