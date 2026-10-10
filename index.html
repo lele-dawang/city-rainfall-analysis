@@ -379,7 +379,9 @@ function render(a, d, h){
   c4.setOption({
     grid:{ left:44, right:12, top:16, bottom:30 },
     tooltip:{ trigger:"axis" },
-    xAxis:{ type:"category", data: hrData.map(x => x.t), axisLabel:{ fontSize:10, color:"#8aa3ad", interval:5 } },
+    xAxis:{ type:"category", data: hrData.map(x => x.t), axisLabel:{ fontSize:10, color:"#8aa3ad", hideOverlap:true,
+      interval:(i, v) => v.indexOf("00:00") >= 0,           // 每天只标一个刻度（0 点）
+      formatter: v => v.slice(0, 5).replace("-", "/") } },   // 标签缩短为 10/03
     yAxis:{ type:"value", name:"mm", nameTextStyle:{ color:"#8aa3ad" }, axisLabel:{ color:"#8aa3ad" } },
     series:[{ type:"bar", data: hrData.map(x => ({ value:+x.r.toFixed(2), itemStyle:{ color: grade(x.r).c } })), barMaxWidth:3 }]
   });
