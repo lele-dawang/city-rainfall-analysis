@@ -35,7 +35,9 @@ chk('分隔符主用 /', 'split(/[/|]/)' in html)
 chk('城市选项 ≥16', len(re.findall(r'<option value="[^"]+\|[0-9.]+\|[0-9.]+"', html)) >= 16)
 chk('竞态守卫 loadSeq', 'loadSeq' in html)
 chk('导出免责声明为近 5 年', '近5年历史样本' in html)
-chk('ECharts 四级降级加载', 'cdn.staticfile.org/echarts' in html and 'vendor/echarts.min.js' in html)
+chk('ECharts 四级降级链完整', 'cdn.staticfile.org/echarts' in html and 'vendor/echarts.min.js' in html)
+chk('逐小时图横轴防重叠（每天一个短标签 + hideOverlap）',
+    'hideOverlap:true' in html and 'v.indexOf("00:00") >= 0' in html)
 chk('render 等待 ECharts 就绪', 'if(!window.echarts)' in html)
 
 # ---------- B. workflow 校验（零依赖；装了 pyyaml 则追加语法校验） ----------
