@@ -1,0 +1,490 @@
+{
+ "design_T2": {
+  "nodes": {
+   "J1": {
+    "avg_depth_m": 0.04,
+    "max_depth_m": 0.12,
+    "max_hgl": 95.9
+   },
+   "J2": {
+    "avg_depth_m": 0.07,
+    "max_depth_m": 0.24,
+    "max_hgl": 95.78
+   },
+   "J3": {
+    "avg_depth_m": 0.1,
+    "max_depth_m": 0.35,
+    "max_hgl": 95.75
+   },
+   "J4": {
+    "avg_depth_m": 0.11,
+    "max_depth_m": 0.36,
+    "max_hgl": 95.61
+   },
+   "J5": {
+    "avg_depth_m": 0.13,
+    "max_depth_m": 0.37,
+    "max_hgl": 95.49
+   },
+   "J6": {
+    "avg_depth_m": 0.04,
+    "max_depth_m": 0.16,
+    "max_hgl": 95.77
+   },
+   "J7": {
+    "avg_depth_m": 0.05,
+    "max_depth_m": 0.2,
+    "max_hgl": 95.5
+   }
+  },
+  "links": {
+   "C1": {
+    "max_flow_cms": 0.018,
+    "max_vel_ms": 0.44,
+    "max_full_flow_ratio": 0.35,
+    "max_full_depth_ratio": 0.61
+   },
+   "C6": {
+    "max_flow_cms": 0.019,
+    "max_vel_ms": 0.35,
+    "max_full_flow_ratio": 0.35,
+    "max_full_depth_ratio": 0.77
+   },
+   "C2": {
+    "max_flow_cms": 0.039,
+    "max_vel_ms": 0.43,
+    "max_full_flow_ratio": 0.49,
+    "max_full_depth_ratio": 0.74
+   },
+   "C3": {
+    "max_flow_cms": 0.082,
+    "max_vel_ms": 0.7,
+    "max_full_flow_ratio": 1.02,
+    "max_full_depth_ratio": 0.88
+   },
+   "C7": {
+    "max_flow_cms": 0.013,
+    "max_vel_ms": 0.23,
+    "max_full_flow_ratio": 0.24,
+    "max_full_depth_ratio": 0.84
+   },
+   "C4": {
+    "max_flow_cms": 0.109,
+    "max_vel_ms": 0.71,
+    "max_full_flow_ratio": 0.84,
+    "max_full_depth_ratio": 0.73
+   },
+   "C5": {
+    "max_flow_cms": 0.144,
+    "max_vel_ms": 0.98,
+    "max_full_flow_ratio": 0.74,
+    "max_full_depth_ratio": 0.51
+   }
+  },
+  "label": "设计暴雨 2 年一遇",
+  "note": "21.500999999999998 mm/2h（POT 设计值）",
+  "rain_total_mm": 21.5
+ },
+ "design_T5": {
+  "nodes": {
+   "J1": {
+    "avg_depth_m": 0.05,
+    "max_depth_m": 0.17,
+    "max_hgl": 95.94
+   },
+   "J2": {
+    "avg_depth_m": 0.09,
+    "max_depth_m": 0.37,
+    "max_hgl": 95.91
+   },
+   "J3": {
+    "avg_depth_m": 0.13,
+    "max_depth_m": 0.47,
+    "max_hgl": 95.87
+   },
+   "J4": {
+    "avg_depth_m": 0.14,
+    "max_depth_m": 0.41,
+    "max_hgl": 95.66
+   },
+   "J5": {
+    "avg_depth_m": 0.16,
+    "max_depth_m": 0.41,
+    "max_hgl": 95.53
+   },
+   "J6": {
+    "avg_depth_m": 0.06,
+    "max_depth_m": 0.3,
+    "max_hgl": 95.91
+   },
+   "J7": {
+    "avg_depth_m": 0.07,
+    "max_depth_m": 0.24,
+    "max_hgl": 95.54
+   }
+  },
+  "links": {
+   "C1": {
+    "max_flow_cms": 0.022,
+    "max_vel_ms": 0.44,
+    "max_full_flow_ratio": 0.42,
+    "max_full_depth_ratio": 0.78
+   },
+   "C6": {
+    "max_flow_cms": 0.022,
+    "max_vel_ms": 0.35,
+    "max_full_flow_ratio": 0.42,
+    "max_full_depth_ratio": 0.99
+   },
+   "C2": {
+    "max_flow_cms": 0.046,
+    "max_vel_ms": 0.43,
+    "max_full_flow_ratio": 0.57,
+    "max_full_depth_ratio": 0.97
+   },
+   "C3": {
+    "max_flow_cms": 0.096,
+    "max_vel_ms": 0.77,
+    "max_full_flow_ratio": 1.19,
+    "max_full_depth_ratio": 1.0
+   },
+   "C7": {
+    "max_flow_cms": 0.016,
+    "max_vel_ms": 0.25,
+    "max_full_flow_ratio": 0.3,
+    "max_full_depth_ratio": 0.9
+   },
+   "C4": {
+    "max_flow_cms": 0.129,
+    "max_vel_ms": 0.75,
+    "max_full_flow_ratio": 0.98,
+    "max_full_depth_ratio": 0.82
+   },
+   "C5": {
+    "max_flow_cms": 0.17,
+    "max_vel_ms": 1.04,
+    "max_full_flow_ratio": 0.88,
+    "max_full_depth_ratio": 0.56
+   }
+  },
+  "label": "设计暴雨 5 年一遇",
+  "note": "25.799999999999997 mm/2h（POT 设计值）",
+  "rain_total_mm": 25.8
+ },
+ "design_T10": {
+  "nodes": {
+   "J1": {
+    "avg_depth_m": 0.06,
+    "max_depth_m": 0.29,
+    "max_hgl": 96.07
+   },
+   "J2": {
+    "avg_depth_m": 0.12,
+    "max_depth_m": 0.49,
+    "max_hgl": 96.03
+   },
+   "J3": {
+    "avg_depth_m": 0.16,
+    "max_depth_m": 0.57,
+    "max_hgl": 95.97
+   },
+   "J4": {
+    "avg_depth_m": 0.16,
+    "max_depth_m": 0.45,
+    "max_hgl": 95.7
+   },
+   "J5": {
+    "avg_depth_m": 0.17,
+    "max_depth_m": 0.44,
+    "max_hgl": 95.56
+   },
+   "J6": {
+    "avg_depth_m": 0.08,
+    "max_depth_m": 0.41,
+    "max_hgl": 96.02
+   },
+   "J7": {
+    "avg_depth_m": 0.08,
+    "max_depth_m": 0.27,
+    "max_hgl": 95.57
+   }
+  },
+  "links": {
+   "C1": {
+    "max_flow_cms": 0.024,
+    "max_vel_ms": 0.43,
+    "max_full_flow_ratio": 0.46,
+    "max_full_depth_ratio": 0.99
+   },
+   "C6": {
+    "max_flow_cms": 0.027,
+    "max_vel_ms": 0.38,
+    "max_full_flow_ratio": 0.5,
+    "max_full_depth_ratio": 1.0
+   },
+   "C2": {
+    "max_flow_cms": 0.052,
+    "max_vel_ms": 0.43,
+    "max_full_flow_ratio": 0.64,
+    "max_full_depth_ratio": 1.0
+   },
+   "C3": {
+    "max_flow_cms": 0.109,
+    "max_vel_ms": 0.86,
+    "max_full_flow_ratio": 1.35,
+    "max_full_depth_ratio": 1.0
+   },
+   "C7": {
+    "max_flow_cms": 0.017,
+    "max_vel_ms": 0.26,
+    "max_full_flow_ratio": 0.32,
+    "max_full_depth_ratio": 0.96
+   },
+   "C4": {
+    "max_flow_cms": 0.145,
+    "max_vel_ms": 0.78,
+    "max_full_flow_ratio": 1.1,
+    "max_full_depth_ratio": 0.89
+   },
+   "C5": {
+    "max_flow_cms": 0.19,
+    "max_vel_ms": 1.07,
+    "max_full_flow_ratio": 0.98,
+    "max_full_depth_ratio": 0.6
+   }
+  },
+  "label": "设计暴雨 10 年一遇",
+  "note": "29.102 mm/2h（POT 设计值）",
+  "rain_total_mm": 29.1
+ },
+ "design_T20": {
+  "nodes": {
+   "J1": {
+    "avg_depth_m": 0.09,
+    "max_depth_m": 0.54,
+    "max_hgl": 96.32
+   },
+   "J2": {
+    "avg_depth_m": 0.15,
+    "max_depth_m": 0.72,
+    "max_hgl": 96.25
+   },
+   "J3": {
+    "avg_depth_m": 0.2,
+    "max_depth_m": 0.77,
+    "max_hgl": 96.17
+   },
+   "J4": {
+    "avg_depth_m": 0.18,
+    "max_depth_m": 0.55,
+    "max_hgl": 95.8
+   },
+   "J5": {
+    "avg_depth_m": 0.2,
+    "max_depth_m": 0.48,
+    "max_hgl": 95.6
+   },
+   "J6": {
+    "avg_depth_m": 0.11,
+    "max_depth_m": 0.63,
+    "max_hgl": 96.24
+   },
+   "J7": {
+    "avg_depth_m": 0.1,
+    "max_depth_m": 0.33,
+    "max_hgl": 95.63
+   }
+  },
+  "links": {
+   "C1": {
+    "max_flow_cms": 0.027,
+    "max_vel_ms": 0.43,
+    "max_full_flow_ratio": 0.51,
+    "max_full_depth_ratio": 1.0
+   },
+   "C6": {
+    "max_flow_cms": 0.029,
+    "max_vel_ms": 0.42,
+    "max_full_flow_ratio": 0.56,
+    "max_full_depth_ratio": 1.0
+   },
+   "C2": {
+    "max_flow_cms": 0.061,
+    "max_vel_ms": 0.49,
+    "max_full_flow_ratio": 0.76,
+    "max_full_depth_ratio": 1.0
+   },
+   "C3": {
+    "max_flow_cms": 0.129,
+    "max_vel_ms": 1.03,
+    "max_full_flow_ratio": 1.6,
+    "max_full_depth_ratio": 1.0
+   },
+   "C7": {
+    "max_flow_cms": 0.021,
+    "max_vel_ms": 0.29,
+    "max_full_flow_ratio": 0.39,
+    "max_full_depth_ratio": 1.0
+   },
+   "C4": {
+    "max_flow_cms": 0.171,
+    "max_vel_ms": 0.88,
+    "max_full_flow_ratio": 1.31,
+    "max_full_depth_ratio": 0.98
+   },
+   "C5": {
+    "max_flow_cms": 0.221,
+    "max_vel_ms": 1.13,
+    "max_full_flow_ratio": 1.14,
+    "max_full_depth_ratio": 0.65
+   }
+  },
+  "label": "设计暴雨 20 年一遇",
+  "note": "32.297999999999995 mm/2h（POT 设计值）",
+  "rain_total_mm": 32.3
+ },
+ "observed": {
+  "nodes": {
+   "J1": {
+    "avg_depth_m": 0.32,
+    "max_depth_m": 2.31,
+    "max_hgl": 98.08
+   },
+   "J2": {
+    "avg_depth_m": 0.39,
+    "max_depth_m": 2.37,
+    "max_hgl": 97.9
+   },
+   "J3": {
+    "avg_depth_m": 0.42,
+    "max_depth_m": 2.28,
+    "max_hgl": 97.68
+   },
+   "J4": {
+    "avg_depth_m": 0.3,
+    "max_depth_m": 1.33,
+    "max_hgl": 96.58
+   },
+   "J5": {
+    "avg_depth_m": 0.26,
+    "max_depth_m": 0.8,
+    "max_hgl": 95.92
+   },
+   "J6": {
+    "avg_depth_m": 0.34,
+    "max_depth_m": 2.25,
+    "max_hgl": 97.87
+   },
+   "J7": {
+    "avg_depth_m": 0.16,
+    "max_depth_m": 0.7,
+    "max_hgl": 96.0
+   }
+  },
+  "links": {
+   "C1": {
+    "max_flow_cms": 0.046,
+    "max_vel_ms": 0.65,
+    "max_full_flow_ratio": 0.87,
+    "max_full_depth_ratio": 1.0
+   },
+   "C6": {
+    "max_flow_cms": 0.05,
+    "max_vel_ms": 0.71,
+    "max_full_flow_ratio": 0.94,
+    "max_full_depth_ratio": 1.0
+   },
+   "C2": {
+    "max_flow_cms": 0.104,
+    "max_vel_ms": 0.82,
+    "max_full_flow_ratio": 1.28,
+    "max_full_depth_ratio": 1.0
+   },
+   "C3": {
+    "max_flow_cms": 0.219,
+    "max_vel_ms": 1.74,
+    "max_full_flow_ratio": 2.71,
+    "max_full_depth_ratio": 1.0
+   },
+   "C7": {
+    "max_flow_cms": 0.035,
+    "max_vel_ms": 0.49,
+    "max_full_flow_ratio": 0.65,
+    "max_full_depth_ratio": 1.0
+   },
+   "C4": {
+    "max_flow_cms": 0.291,
+    "max_vel_ms": 1.48,
+    "max_full_flow_ratio": 2.23,
+    "max_full_depth_ratio": 1.0
+   },
+   "C5": {
+    "max_flow_cms": 0.384,
+    "max_vel_ms": 1.52,
+    "max_full_flow_ratio": 1.98,
+    "max_full_depth_ratio": 0.84
+   }
+  },
+  "label": "实测最不利过程",
+  "note": "2024-08-09T20:00 起，3h 合计 67.3 mm",
+  "rain_total_mm": 62.3
+ },
+ "_scan": [
+  {
+   "mult": 1.0,
+   "rain_mm": 32.3,
+   "flood_nodes": 0,
+   "flood_m3": 0,
+   "max_full_ratio": 1.6
+  },
+  {
+   "mult": 1.5,
+   "rain_mm": 48.4,
+   "flood_nodes": 0,
+   "flood_m3": 0,
+   "max_full_ratio": 2.64
+  },
+  {
+   "mult": 2.0,
+   "rain_mm": 64.6,
+   "flood_nodes": 4,
+   "flood_m3": 155.0,
+   "max_full_ratio": 2.78
+  },
+  {
+   "mult": 2.5,
+   "rain_mm": 80.7,
+   "flood_nodes": 4,
+   "flood_m3": 508.0,
+   "max_full_ratio": 2.78
+  },
+  {
+   "mult": 3.0,
+   "rain_mm": 96.9,
+   "flood_nodes": 4,
+   "flood_m3": 961.0,
+   "max_full_ratio": 2.94
+  },
+  {
+   "mult": 3.5,
+   "rain_mm": 113.0,
+   "flood_nodes": 4,
+   "flood_m3": 1455.0,
+   "max_full_ratio": 3.21
+  },
+  {
+   "mult": 4.0,
+   "rain_mm": 129.2,
+   "flood_nodes": 6,
+   "flood_m3": 1982.0,
+   "max_full_ratio": 3.42
+  },
+  {
+   "mult": 5.0,
+   "rain_mm": 161.5,
+   "flood_nodes": 6,
+   "flood_m3": 3156.0,
+   "max_full_ratio": 3.56
+  }
+ ]
+}
