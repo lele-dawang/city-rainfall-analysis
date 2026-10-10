@@ -69,7 +69,7 @@
 <div class="wrap">
   <header>
     <h1>🌧 城市雨水情与排水设计分析</h1>
-    <span class="sub">数据：Open-Meteo（全球气象再分析，公开 API）· 分析方法：超阈值抽样 + 指数分布重现期估算 · 推理公式 Q=ΨqF · 个人项目</span>
+    <span class="sub">数据：Open-Meteo（全球气象再分析，公开 API）· 分析方法：超阈值抽样 + 指数分布重现期估算 · 推理公式 Q=ΨqF · SWMM 管网水力模型 · 个人项目</span>
     <div class="controls">
       <select id="citySel" onchange="load()">
         <option value="张家口|40.768|114.886" selected>张家口</option>
@@ -323,6 +323,50 @@ function render(a, d, h){
         ${best >= 10 ? `⚠️ 已连续 ${best} 天无有效降雨，注意旱情与绿化补水。` : ""}
         ${sumFc >= 30 ? "💧 未来一周降雨较多，出行与施工注意排水防涝。" : "🌤️ 未来一周降雨总体温和。"}
       </div>
+    </div>
+    <div class="card"><h2>🏗 排水管网水力模型（SWMM）· 北京案例</h2>
+      <div class="note" style="margin-top:0">
+        本模块是固定的 <b>概化住宅小区案例</b>（服务面积 5.00 ha，综合径流系数约 0.60，
+        7 座检查井 + 7 段管道 DN300~DN600，井深 2.5 m），<b>不随上方城市选择变化</b>。
+        管网按常规小区布置形式<b>概化</b>（非实测 GIS 拓扑），用途为方案级校核与内涝风险比较。
+      </div>
+      <div class="chart" id="c5"></div>
+      <div class="note">纵轴为<b>最大满流比</b>（管段最大流量 ÷ 满流流量），图中虚线为满流线（比值 = 1.0）。
+        满流比 &gt; 1.0 表示管道由无压满流转为<b>承压运行</b>（水力坡度线超过管顶）。
+        工况 1~4 为按短历时（2 h）设计暴雨演算，最后一个为实测最不利降雨过程。</div>
+
+      <div style="font-size:13px;font-weight:700;color:var(--ink);margin:16px 0 4px">
+        短历时设计雨量（1~24 h，超阈值抽样 POT 含去丛，阈值 3 mm）</div>
+      <div style="overflow-x:auto;margin:6px 0 2px"><table style="width:100%;border-collapse:collapse;font-size:12.5px;text-align:center;min-width:420px"><tr style="color:var(--muted);font-size:11.5px"><th style="text-align:left;padding:4px 0;font-weight:600">历时</th><th style="padding:4px 0;font-weight:600">2 年</th><th style="padding:4px 0;font-weight:600">5 年</th><th style="padding:4px 0;font-weight:600">10 年</th><th style="padding:4px 0;font-weight:600">20 年</th><th style="padding:4px 0;font-weight:600">实测最大</th></tr><tr><td style="padding:5px 0;border-top:1px solid #eef4f7;text-align:left;font-weight:600">1 h</td><td style="padding:5px 0;border-top:1px solid #eef4f7">13.5</td><td style="padding:5px 0;border-top:1px solid #eef4f7">16.2</td><td style="padding:5px 0;border-top:1px solid #eef4f7">18.2</td><td style="padding:5px 0;border-top:1px solid #eef4f7"><b>20.2</b></td><td style="padding:5px 0;border-top:1px solid #eef4f7"><span style="color:#b45309">16.8</span></td></tr><tr><td style="padding:5px 0;border-top:1px solid #eef4f7;text-align:left;font-weight:600">2 h</td><td style="padding:5px 0;border-top:1px solid #eef4f7">21.5</td><td style="padding:5px 0;border-top:1px solid #eef4f7">25.8</td><td style="padding:5px 0;border-top:1px solid #eef4f7">29.1</td><td style="padding:5px 0;border-top:1px solid #eef4f7"><b>32.3</b></td><td style="padding:5px 0;border-top:1px solid #eef4f7"><span style="color:#b45309">51.6</span></td></tr><tr><td style="padding:5px 0;border-top:1px solid #eef4f7;text-align:left;font-weight:600">3 h</td><td style="padding:5px 0;border-top:1px solid #eef4f7">25.6</td><td style="padding:5px 0;border-top:1px solid #eef4f7">30.7</td><td style="padding:5px 0;border-top:1px solid #eef4f7">34.5</td><td style="padding:5px 0;border-top:1px solid #eef4f7"><b>38.3</b></td><td style="padding:5px 0;border-top:1px solid #eef4f7"><span style="color:#b45309">56.4</span></td></tr><tr><td style="padding:5px 0;border-top:1px solid #eef4f7;text-align:left;font-weight:600">6 h</td><td style="padding:5px 0;border-top:1px solid #eef4f7">36.0</td><td style="padding:5px 0;border-top:1px solid #eef4f7">43.2</td><td style="padding:5px 0;border-top:1px solid #eef4f7">48.6</td><td style="padding:5px 0;border-top:1px solid #eef4f7"><b>54.0</b></td><td style="padding:5px 0;border-top:1px solid #eef4f7"><span style="color:#b45309">68.7</span></td></tr><tr><td style="padding:5px 0;border-top:1px solid #eef4f7;text-align:left;font-weight:600">24 h</td><td style="padding:5px 0;border-top:1px solid #eef4f7">64.3</td><td style="padding:5px 0;border-top:1px solid #eef4f7">77.6</td><td style="padding:5px 0;border-top:1px solid #eef4f7">87.6</td><td style="padding:5px 0;border-top:1px solid #eef4f7"><b>97.7</b></td><td style="padding:5px 0;border-top:1px solid #eef4f7"><span style="color:#b45309">97.4</span></td></tr></table></div>
+      <div class="note">单位 mm。基于近 5.75 年<b>逐小时</b>降雨（ERA5）估算：
+        去丛后样本 1 h 108 场、2 h 150 场、24 h 198 场。
+        <b>去丛是必须的</b>——滚动窗口直接取样会把同一场雨的相邻时刻重复计入，
+        使年事件率虚高、设计值偏大。</div>
+
+      <div style="font-size:13px;font-weight:700;color:var(--ink);margin:16px 0 4px">
+        内涝临界雨量（防涝预警阈值）</div>
+      <div class="chart" id="c6"></div>
+      <div class="note">横轴为 2 h 降雨量（mm），左轴为地面积水总量（m³），右轴为溢流检查井数。
+        把 20 年一遇设计雨型逐级放大，考察检查井开始溢流（地面积水）的临界点：
+        <b style="color:var(--accent)">约 64.6 mm/2 h</b>
+        （约 32.3 mm/h 平均雨强），
+        约为 20 年一遇设计值的 2.0 倍。
+        该值可直接作为<b>排水防涝预警的雨强阈值参考</b>。</div>
+
+      <div class="concl" style="margin-top:12px">
+        管网按"24 h 雨量平均强度"初选（本页上方 Q=ΨqF，q=P/24），
+        在 2 年一遇时仅 <b>1/7</b> 段管道达到满流
+        （最大满流比 1.02）、无检查井溢流；
+        但 <b>20 年一遇</b>时已有 <b>3/7</b> 段转为承压
+        （最大满流比 1.60），<b>实测极端过程</b>下达
+        <b>2.71</b>。
+        短历时峰值强度可达 24 h 平均强度的数倍——这正是<b>用平均强度估算设计流量会低估峰值流量</b>的直接证据，
+        也说明必须引入短历时频率分析与管网水力模型。
+      </div>
+      <div class="note">局限：① 管网为概化管网，非实测 GIS；② ERA5 逐小时数据无法分辨小时内雨强脉动，
+        短历时（&lt;1 h）峰值存在低估；③ 雨型参数由 POT 的 1 h/2 h 比值率定，与当地实测雨型仍有差异；
+        ④ 样本 5.75 年，POT 重现期估计置信区间较宽（同重现期下逐日口径与逐小时口径的 24 h 设计雨量相差约 12%）；
+        ⑤ 未考虑管网沉积、堵塞与地下水入渗。正式设计应采用当地 ≥20 年暴雨资料与当地暴雨强度公式（GB 50014）。</div>
     </div>`;
 
   // 恢复计算器参数（二次渲染不重置用户调整）
@@ -384,6 +428,55 @@ function render(a, d, h){
       formatter: v => v.slice(0, 5).replace("-", "/") } },   // 标签缩短为 10/03
     yAxis:{ type:"value", name:"mm", nameTextStyle:{ color:"#8aa3ad" }, axisLabel:{ color:"#8aa3ad" } },
     series:[{ type:"bar", data: hrData.map(x => ({ value:+x.r.toFixed(2), itemStyle:{ color: grade(x.r).c } })), barMaxWidth:3 }]
+  });
+
+
+  /* ---------- SWMM 管网模型模块（固定北京案例，不随城市变化） ---------- */
+  const SW = {"city":"北京","drain":{"1h":{"x":{"2":13.5,"5":16.2,"10":18.2,"20":20.2},"obs":16.8,"n":108},"2h":{"x":{"2":21.5,"5":25.8,"10":29.1,"20":32.3},"obs":51.6,"n":150},"3h":{"x":{"2":25.6,"5":30.7,"10":34.5,"20":38.3},"obs":56.4,"n":172},"6h":{"x":{"2":36.0,"5":43.2,"10":48.6,"20":54.0},"obs":68.7,"n":197},"24h":{"x":{"2":64.3,"5":77.6,"10":87.6,"20":97.7},"obs":97.4,"n":198}},"scen":[{"k":"design_T2","label":"设计暴雨 2 年一遇","rain":21.5,"floodNodes":0,"floodM3":0,"over":1,"total":7,"maxFull":1.02},{"k":"design_T5","label":"设计暴雨 5 年一遇","rain":25.8,"floodNodes":0,"floodM3":0,"over":1,"total":7,"maxFull":1.19},{"k":"design_T10","label":"设计暴雨 10 年一遇","rain":29.1,"floodNodes":0,"floodM3":0,"over":2,"total":7,"maxFull":1.35},{"k":"design_T20","label":"设计暴雨 20 年一遇","rain":32.3,"floodNodes":0,"floodM3":0,"over":3,"total":7,"maxFull":1.6},{"k":"observed","label":"实测最不利过程","rain":62.3,"floodNodes":0,"floodM3":0,"over":4,"total":7,"maxFull":2.71}],"scan":[{"rain":32.3,"floodM3":0,"nodes":0,"maxFull":1.6},{"rain":48.4,"floodM3":0,"nodes":0,"maxFull":2.64},{"rain":64.6,"floodM3":155.0,"nodes":4,"maxFull":2.78},{"rain":80.7,"floodM3":508.0,"nodes":4,"maxFull":2.78},{"rain":96.9,"floodM3":961.0,"nodes":4,"maxFull":2.94},{"rain":113.0,"floodM3":1455.0,"nodes":4,"maxFull":3.21},{"rain":129.2,"floodM3":1982.0,"nodes":6,"maxFull":3.42},{"rain":161.5,"floodM3":3156.0,"nodes":6,"maxFull":3.56}],"onset":{"rain":64.6,"floodM3":155.0,"nodes":4,"maxFull":2.78},"area_ha":5.0,"pipes":7,"hyeto":{"2":[0.577,0.607,0.643,0.686,0.739,0.806,0.894,1.017,1.204,1.524,1.69,1.394,1.204,1.07,0.971,0.894,0.832,0.781,0.739,0.702,0.67,0.643,0.618,0.596],"5":[0.692,0.728,0.771,0.823,0.886,0.967,1.073,1.221,1.444,1.829,2.028,1.673,1.444,1.284,1.165,1.073,0.999,0.938,0.886,0.842,0.805,0.771,0.742,0.716],"20":[0.861,0.911,0.97,1.04,1.125,1.232,1.369,1.553,1.813,2.21,2.393,2.056,1.813,1.63,1.486,1.369,1.274,1.194,1.125,1.067,1.015,0.97,0.929,0.893]}};
+  const c5 = mkChart("c5");
+  if(c5) c5.setOption({
+    grid:{ left:44, right:14, top:22, bottom:34 },
+    tooltip:{ trigger:"axis",
+      formatter: p => `${p[0].axisValue}<br/>降雨 ${SW.scen[p[0].dataIndex].rain} mm<br/>最大满流比 <b>${p[0].value}</b><br/>承压管道 ${SW.scen[p[0].dataIndex].over}/${SW.scen[p[0].dataIndex].total} 段` },
+    xAxis:{ type:"category", axisLabel:{ fontSize:11, color:"#8aa3ad" },
+      data: SW.scen.map(s => s.label.replace("设计暴雨 ","").replace("实测最不利过程","实测极端")) },
+    yAxis:{ type:"value", max:3.2, axisLabel:{ color:"#8aa3ad" } },
+    series:[{
+      type:"bar", barMaxWidth:46,
+      data: SW.scen.map((s, i) => ({ value:s.maxFull,
+        itemStyle:{ color:["#7dd3fc","#0ea5e9","#0284c7","#075985","#7f1d1d"][i] } })),
+      label:{ show:true, position:"top", fontSize:12, color:"#0f3d4d", formatter:p => p.value.toFixed(2) },
+      markLine:{ silent:true, symbol:"none",
+        lineStyle:{ color:"#4a6b78", type:"dashed" },
+        data:[{ yAxis:1 }] }
+    }],
+    // 满流上限的说明放在左上空白处：markLine 的 label 会压在柱子上
+    graphic:[{ type:"text", left:56, top:8,
+      style:{ text:"- - - 满流（无压流上限）", fontSize:10, fill:"#4a6b78" } }]
+  });
+  const c6 = mkChart("c6");
+  if(c6) c6.setOption({
+    grid:{ left:52, right:52, top:34, bottom:30 },
+    tooltip:{ trigger:"axis" },
+    legend:{ data:["地面积水总量","溢流检查井数"], textStyle:{ fontSize:11, color:"#8aa3ad" }, top:0, right:0 },
+    xAxis:{ type:"category", axisLabel:{ fontSize:11, color:"#8aa3ad" },
+      data: SW.scan.map(s => s.rain) },
+    yAxis:[
+      { type:"value", name:"m³", nameTextStyle:{ color:"#8aa3ad" }, axisLabel:{ color:"#8aa3ad" } },
+      { type:"value", name:"井数", max:8, nameTextStyle:{ color:"#8aa3ad" }, axisLabel:{ color:"#8aa3ad" } }
+    ],
+    series:[
+      { name:"地面积水总量", type:"line", smooth:true,
+        data: SW.scan.map(s => s.floodM3),
+        lineStyle:{ color:"#0ea5e9", width:2.5 }, itemStyle:{ color:"#0ea5e9" },
+        markLine:{ silent:true, symbol:"none",
+          lineStyle:{ color:"#059669", type:"dashdot" },
+          label:{ formatter: SW.onset ? ("内涝临界\n" + SW.onset.rain + " mm/2h") : "", fontSize:10, color:"#059669" },
+          data: SW.onset ? [{ xAxis: SW.scan.findIndex(s => s.nodes > 0) }] : [] } },
+      { name:"溢流检查井数", type:"line", yAxisIndex:1, smooth:true,
+        data: SW.scan.map(s => s.nodes),
+        lineStyle:{ color:"#f59e0b", width:2, type:"dashed" }, itemStyle:{ color:"#f59e0b" } }
+    ]
   });
 
   // 计算器状态 + 导出数据快照
