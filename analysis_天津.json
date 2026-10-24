@@ -2,52 +2,52 @@
   "city": "天津",
   "lat": 39.084,
   "lng": 117.201,
-  "generated_at": "2026-10-23T00:25:36",
+  "generated_at": "2026-10-24T00:19:36",
   "sample_years": 5.0,
   "sample_days": 1826,
   "window": [
-    "2021-10-23",
-    "2026-10-22"
+    "2021-10-24",
+    "2026-10-23"
   ],
   "stats_90d": {
-    "total_mm": 305.2,
-    "max_day_mm": 49.2,
-    "max_date": "2026-08-25",
-    "wet_days": 49,
-    "heavy_days": 3,
-    "storm_days": 0,
+    "total_mm": 293.5,
+    "max_day_mm": 54.1,
+    "max_date": "2026-08-26",
+    "wet_days": 47,
+    "heavy_days": 1,
+    "storm_days": 1,
     "max_dry_streak": 9
   },
   "stats_history": {
-    "total_mm": 3463.9,
-    "max_day_mm": 91.6,
+    "total_mm": 3464.8,
+    "max_day_mm": 92.4,
     "max_date": "2024-08-26",
-    "wet_days": 549,
-    "heavy_days": 28,
-    "storm_days": 6,
+    "wet_days": 552,
+    "heavy_days": 23,
+    "storm_days": 9,
     "max_dry_streak": 61
   },
   "return_period_24h_mm": {
-    "2": 59.0,
-    "5": 70.8,
-    "10": 79.7,
-    "20": 88.5
+    "2": 59.7,
+    "5": 71.7,
+    "10": 80.7,
+    "20": 89.7
   },
   "pot": {
     "threshold_mm": 5.0,
-    "events": 168,
-    "beta": 12.83,
-    "lambda_per_year": 33.6
+    "events": 166,
+    "beta": 13.04,
+    "lambda_per_year": 33.2
   },
   "design_flow_T5": {
-    "q_mmh": 2.9,
+    "q_mmh": 3.0,
     "Q_m3s": 0.025,
-    "D_mm": 177,
+    "D_mm": 178,
     "DN": "DN200",
     "psi": 0.6,
     "area_ha": 5.0,
     "method": "Q = Psi*q*F, q = P5/24 (24h average approx)"
   },
-  "forecast_7d_mm": 1.3,
+  "forecast_7d_mm": 0.2,
   "disclaimer": "基于近 5 年历史数据(ERA5 再分析)的估算; 正式设计仍须采用当地多年暴雨资料与当地暴雨强度公式 (GB50014-2021)。"
 }
