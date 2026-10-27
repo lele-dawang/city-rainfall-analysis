@@ -2,15 +2,15 @@
   "city": "张家口",
   "lat": 40.768,
   "lng": 114.886,
-  "generated_at": "2026-10-25T23:53:22",
+  "generated_at": "2026-10-27T01:13:58",
   "sample_years": 5.0,
   "sample_days": 1826,
   "window": [
-    "2021-10-25",
-    "2026-10-24"
+    "2021-10-27",
+    "2026-10-26"
   ],
   "stats_90d": {
-    "total_mm": 154.8,
+    "total_mm": 163.6,
     "max_day_mm": 27.4,
     "max_date": "2026-10-17",
     "wet_days": 36,
@@ -19,25 +19,25 @@
     "max_dry_streak": 12
   },
   "stats_history": {
-    "total_mm": 2320.0,
+    "total_mm": 2329.3,
     "max_day_mm": 65.0,
     "max_date": "2025-08-27",
-    "wet_days": 538,
+    "wet_days": 539,
     "heavy_days": 13,
     "storm_days": 1,
     "max_dry_streak": 65
   },
   "return_period_24h_mm": {
     "2": 36.9,
-    "5": 44.2,
-    "10": 49.7,
-    "20": 55.2
+    "5": 44.1,
+    "10": 49.6,
+    "20": 55.1
   },
   "pot": {
     "threshold_mm": 5.0,
-    "events": 140,
-    "beta": 7.93,
-    "lambda_per_year": 28.0
+    "events": 141,
+    "beta": 7.9,
+    "lambda_per_year": 28.2
   },
   "design_flow_T5": {
     "q_mmh": 1.8,
