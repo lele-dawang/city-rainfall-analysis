@@ -2,18 +2,18 @@
   "city": "北京",
   "lat": 39.904,
   "lng": 116.407,
-  "generated_at": "2026-10-27T01:13:59",
+  "generated_at": "2026-10-28T01:00:52",
   "sample_years": 5.0,
   "sample_days": 1826,
   "window": [
-    "2021-10-27",
-    "2026-10-26"
+    "2021-10-28",
+    "2026-10-27"
   ],
   "stats_90d": {
-    "total_mm": 283.9,
+    "total_mm": 281.2,
     "max_day_mm": 52.2,
     "max_date": "2026-10-17",
-    "wet_days": 43,
+    "wet_days": 42,
     "heavy_days": 2,
     "storm_days": 1,
     "max_dry_streak": 12
