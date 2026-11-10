@@ -2,18 +2,18 @@
   "city": "天津",
   "lat": 39.084,
   "lng": 117.201,
-  "generated_at": "2026-11-09T01:28:45",
+  "generated_at": "2026-11-10T03:58:20",
   "sample_years": 5.0,
   "sample_days": 1826,
   "window": [
-    "2021-11-09",
-    "2026-11-08"
+    "2021-11-10",
+    "2026-11-09"
   ],
   "stats_90d": {
-    "total_mm": 275.6,
+    "total_mm": 272.0,
     "max_day_mm": 54.1,
     "max_date": "2026-08-26",
-    "wet_days": 42,
+    "wet_days": 41,
     "heavy_days": 1,
     "storm_days": 1,
     "max_dry_streak": 9
