@@ -2,18 +2,18 @@
   "city": "张家口",
   "lat": 40.768,
   "lng": 114.886,
-  "generated_at": "2026-11-20T02:52:14",
+  "generated_at": "2026-11-21T03:00:03",
   "sample_years": 5.0,
   "sample_days": 1826,
   "window": [
-    "2021-11-20",
-    "2026-11-19"
+    "2021-11-21",
+    "2026-11-20"
   ],
   "stats_90d": {
-    "total_mm": 106.4,
+    "total_mm": 104.5,
     "max_day_mm": 27.4,
     "max_date": "2026-10-17",
-    "wet_days": 26,
+    "wet_days": 25,
     "heavy_days": 1,
     "storm_days": 0,
     "max_dry_streak": 12
