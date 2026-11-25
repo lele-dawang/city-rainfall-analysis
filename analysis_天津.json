@@ -2,20 +2,20 @@
   "city": "天津",
   "lat": 39.084,
   "lng": 117.201,
-  "generated_at": "2026-11-24T05:45:25",
+  "generated_at": "2026-11-25T04:47:48",
   "sample_years": 5.0,
   "sample_days": 1826,
   "window": [
-    "2021-11-24",
-    "2026-11-23"
+    "2021-11-25",
+    "2026-11-24"
   ],
   "stats_90d": {
-    "total_mm": 195.5,
-    "max_day_mm": 54.1,
-    "max_date": "2026-08-26",
-    "wet_days": 30,
+    "total_mm": 141.4,
+    "max_day_mm": 24.1,
+    "max_date": "2026-09-07",
+    "wet_days": 29,
     "heavy_days": 0,
-    "storm_days": 1,
+    "storm_days": 0,
     "max_dry_streak": 9
   },
   "stats_history": {
